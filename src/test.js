@@ -28,6 +28,10 @@ function test2(){
     const p2 = mfCreateElement(vdom)
     console.log(p2); 
     test.appendChild(p2)
+
+    const root = document.querySelector('#root')
+    console.log('root ==>', root);
+    
 }
 
 test2()
