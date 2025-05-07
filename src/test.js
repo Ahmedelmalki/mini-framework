@@ -1,38 +1,37 @@
-function test() {
-  const test = document.getElementById("test");
-  const p = document.createElement("p");
-  p.className = "paragraph";
-  p.textContent = `Lorem ipsum dolor sit amet consectetur adipiscing elit
-    . Consectetur adipiscing elit quisque faucibus ex sapien vitae. Ex sapien vitae pellentesque sem placer
-    at in id. Placerat in id cursus mi pretium tellus duis. Pretium 
-    tellus duis convallis tempus leo eu aenean.`;
-  test.appendChild(p);
-}
 
-test();
-
-// test 2
+// test 3
 import { mfCreateElement } from "../logic/dom/creatElement.js";
 
-const vdom = {
-  tag: 'div',
-  attrs: { id: 'root' },
-  children: [
-    { tag: 'h1', attrs: {}, children: ['Hello World'] },
-    { tag: 'button', attrs: { id: 'clickMe' }, children: ['Click me'] }
-  ]
-};
+function todos(){
+  console.log("0000000000000000000000");
+  
+  const tmpl = /*html*/`
+  <div>
+    <h1>todos</h1>
+    <div class="todos-box">
+      <input type="text">
+      <section class="todos-list">
+        <!-- todos list -->
+      </section>
+      <section class="btns-section">
+        <span>X items left</span>
+        <button> All </button>
+        <button> Active </button>
+        <button> Complated </button>
+        <button>Clear Completed</button>
+      </section>
+    </div>
+  </div>
+  ` 
+  const root = document.getElementById('root')
+  mfCreateElement(root, tmpl)
 
-function test2(){
-    const test = document.getElementById("test");
-    const p2 = mfCreateElement(vdom)
-    console.log(p2); 
-    test.appendChild(p2)
-
-    const root = document.querySelector('#root')
-    console.log('root ==>', root);
-    
 }
 
-test2()
+todos()
 
+/* fucn createDiv(tag, class, innerText){
+    const tag = d.createlement(tag)
+    
+  }
+*/

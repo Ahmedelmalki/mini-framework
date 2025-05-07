@@ -1,4 +1,7 @@
-export function mfCreateElement(vnode) {
+export function mfCreateElement(parntId, tmpl) {
+  const vnode = parseTemplate(tmpl)
+  console.log('vnode ==>', vnode);
+  
   const el = document.createElement(vnode.tag);
 
   // Set attributes
@@ -8,80 +11,54 @@ export function mfCreateElement(vnode) {
 
   // Process children
   (vnode.children || []).forEach((child) => {
-    const childEl =
-      typeof child === "string"
-        ? document.createTextNode(child)
-        : mfCreateElement(child);
+    const childEl = typeof child === "string" ? document.createTextNode(child) : mfCreateElement(child);
     el.appendChild(childEl);
   });
 
-  return el;
+  parntId.appendChild(el)
 }
 
-export function parseTemplate(templateString) {
+ function parseTemplate(templateString) {
   const parser = new DOMParser();
-  // Wrap in a single root so fragment parses correctly
-  const doc = parser.parseFromString(
-    `<template>${templateString}</template>`,
-    "text/html"
-  );
-  return Array.from(doc.querySelector("template").childNodes).map((node) =>
-    nodeToVNode(node)
-  );
+  const doc = parser.parseFromString(`<template>${templateString}</template>`, 'text/html');
+  return Array.from(doc.querySelector('template').childNodes)
+    .map(node => nodeToVNode(node))
+    .filter(Boolean);
 }
 
 export function nodeToVNode(node) {
-  // Text node
   if (node.nodeType === Node.TEXT_NODE) {
-    return node.textContent.trim()
-      ? { type: "text", value: node.textContent }
-      : null;
+    const text = node.textContent.trim();
+    return text ? { type: 'text', value: text } : null;
   }
 
-  // Element node
   const tag = node.nodeName.toLowerCase();
   const attrs = {};
-  for (let { name, value } of Array.from(node.attributes)) {
-    // Simple event handling syntax: @click → onClick
-    if (name.startsWith("@")) {
-      attrs["on" + name.slice(1).replace(/^\w/, (c) => c.toUpperCase())] =
-        value;
-    } else {
-      attrs[name] = value;
-    }
+  for (let { name, value } of node.attributes) {
+    attrs[name] = value;
   }
 
   const children = Array.from(node.childNodes)
     .map(nodeToVNode)
-    .filter((v) => v !== null);
+    .filter(Boolean);
 
-  return { type: "element", tag, attrs, children };
+  return { type: 'element', tag, attrs, children };
 }
 
-export function renderVNode(vnode, container) {
-  if (vnode.type === "text") {
+
+export function renderVNode(vnode) {
+  if (vnode.type === 'text') {
     return document.createTextNode(vnode.value);
   }
-  const el = document.createElement(vnode.tag);
 
-  // Attributes & events
+  const el = document.createElement(vnode.tag);
   for (let [key, val] of Object.entries(vnode.attrs)) {
-    if (key.startsWith("on")) {
-      el.addEventListener(key.slice(2).toLowerCase(), window[val]);
-    } else {
-      el.setAttribute(key, val);
-    }
+    el.setAttribute(key, val);
   }
 
-  // Children
-  vnode.children.forEach((child) => {
-    el.appendChild(renderVNode(child, el));
+  vnode.children.forEach(child => {
+    el.appendChild(renderVNode(child));
   });
 
   return el;
 }
-
-// Usage
-const vdomTree = parseTemplate(tpl);
-const rootEl = renderVNode(vdomTree[0]);
-document.getElementById("root").appendChild(rootEl);
