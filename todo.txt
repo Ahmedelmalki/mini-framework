@@ -3,3 +3,11 @@ Your framework needs to implement:
     Routing system
     State management
     Event handling
+
+Code examples and explanations on how to:
+    Create an element
+    Create an event
+    Nest elements
+    Add attributes to an element
+
+note : You have to take into account the events, children and attributes of each element of the DOM.
