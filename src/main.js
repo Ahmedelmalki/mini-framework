@@ -74,4 +74,4 @@ function renderApp() {
 initRouter(container);
 
 // Or without router, just render TodoApp directly
-// render(TodoApp, container);
+ render(TodoApp, container);

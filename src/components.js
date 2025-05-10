@@ -105,10 +105,7 @@ export function TodoApp() {
           onclick: () => handleToggle(todo.id)
         }),
         h('label', {}, todo.text),
-        h('button', { 
-          class: 'destroy',
-          onclick: () => handleDelete(todo.id)
-        })
+        h('button')
       ])
     ]);
   }
@@ -182,12 +179,12 @@ export function TodoApp() {
             }, 'Completed')
           ])
         ]),
-        getTodos().some(todo => todo.completed) ? 
+        getTodos().some(todo => todo.completed) ? // wtf is this ???
           h('button', { 
             class: 'clear-completed',
             onclick: handleClearCompleted
-          }, 'Clear completed') : null
-      ]) : null
+          }, 'Clear completed'): 'kkkkkkkkkkkkkkk'
+      ]) : 'mmmmmmmmmmmm'
     ]);
   }
 
