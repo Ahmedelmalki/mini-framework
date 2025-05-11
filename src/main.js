@@ -1,4 +1,7 @@
 
+import { diff } from "./vdom/diff.js";
+import { patch } from "./vdom/patch.js";
+
 const container = document.getElementById("root")
 
 function createElement(type, props, ...children) {
@@ -55,7 +58,17 @@ const element = ourFrame.createElement(
   ourFrame.createElement("b")
 )
 
+const newElement = ourFrame.createElement(
+  "div",
+  { id: "foo" },
+  ourFrame.createElement("a", null, "baz"),
+  ourFrame.createElement("b"),
+  // ourFrame.createElement("c")
+);
 
 console.log(element);
 
 ourFrame.render(element, container)
+
+const patches = diff(element, newElement);
+patch(container, patches);
