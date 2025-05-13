@@ -1,5 +1,6 @@
 export function diff(oldTree, newTree) {
   const patches = [];
+  // const index = { value: 0 };
   walk(oldTree, newTree, patches, 0);
   return patches;
 }
@@ -12,12 +13,16 @@ function walk(oldNode, newNode, patches, index) {
     patch.push({ type: "REMOVE", index });
   } else if (!oldNode) {
     // Node added
-    patch.push({ type: "ADD", newNode });
+      console.log("New node added:", newNode);
+    patch.push({ type: "ADD", newNode, index: index });
   } else if (oldNode.type !== newNode.type) {
     // Node replaced
     patch.push({ type: "REPLACE", newNode });
-  } else if (oldNode.type === "TEXT_ELEMENT" && oldNode.props.nodeValue !== newNode.props.nodeValue) {
+  } else if (
     // Text content changed
+    oldNode.type === "TEXT_ELEMENT" &&
+    oldNode.props.nodeValue !== newNode.props.nodeValue
+  ) {
     patch.push({ type: "TEXT", newNode });
   } else {
     // Check for property changes
@@ -61,6 +66,77 @@ function diffChildren(oldNode, newNode, patches, index) {
   const max = Math.max(oldChildren.length, newChildren.length);
 
   for (let i = 0; i < max; i++) {
-    walk(oldChildren[i], newChildren[i], patches, ++index);
+    index++;
+    walk(oldChildren[i], newChildren[i], patches, index);
   }
 }
+
+/******************** render logic *******************/
+
+function createElement(type, props, ...children) {
+  return {
+    type,
+    props: {
+      ...props,
+      children: children.map((child) =>
+        typeof child === "object" ? child : createTextElement(child)
+      ),
+    },
+  };
+}
+
+function createTextElement(text) {
+  return {
+    type: "TEXT_ELEMENT",
+    props: {
+      nodeValue: text,
+      children: [],
+    },
+  };
+}
+
+function render(element, container) {
+  const dom =
+    element.type === "TEXT_ELEMENT"
+      ? document.createTextNode(element.props.nodeValue)
+      : document.createElement(element.type);
+
+  // Only set attributes/events if it's not a text node
+  if (element.type !== "TEXT_ELEMENT") {
+    Object.keys(element.props)
+      .filter((key) => key !== "children")
+      .forEach((name) => {
+        const value = element.props[name];
+        if (name.startsWith("on") && typeof value === "function") {
+          const eventType = name.toLowerCase().substring(2);
+          dom.addEventListener(eventType, value);
+        } else if (name === "value" || name === "checked") {
+          dom[name] = value;
+        } else {
+          dom.setAttribute(name, value);
+        }
+      });
+  }
+
+  // Render children recursively
+  element.props.children.forEach((child) => render(child, dom));
+
+  container.appendChild(dom);
+}
+
+// const newEl = (name, args = {}, ...children ) =>{
+//   const el = document.createElement(name)
+
+//   for (const arg of args) {
+//     el.setAttribute(arg,args[arg])
+//   }
+
+//   if (children) {
+//     for (const child of children) {
+//       el.appendChild(child)
+//     }
+//   }
+//   return el
+// }
+// newEl('div',{class: 'box'})
+export const ourFrame = { createElement, render };

@@ -1,77 +1,75 @@
+import { diff } from "./vdom/diff.js";
+import { patch } from "./vdom/patch.js";
+import { ourFrame } from "./vdom/diff.js";
 
-// import { diff } from "./vdom/diff.js";
-// import { patch } from "./vdom/patch.js";
+const container = document.getElementById("root");
 
-const container = document.getElementById("root")
+let inputValue = "";
+let todos = [];
+let currentApp = null; // Keep track of the current app state/virtual DOM
 
-function createElement(type, props, ...children) {
-  return {
-    type,
-    props: {
-      ...props,
-      children: children.map(child =>
-        typeof child === "object" ? child : createTextElement(child)
-      ),
-    },
-  }
+function App() {
+  return ourFrame.createElement(
+    "div",
+    null,
+    ourFrame.createElement("h1", null, "Todos"),
+    ourFrame.createElement(
+      "section",
+      { className: "enterTodos" },
+      ourFrame.createElement("input", {
+        type: "text",
+        value: inputValue,
+        placeholder: "enter a todo",
+        onInput: (e) => {
+          inputValue = e.target.value;
+        },
+      }),
+      ourFrame.createElement(
+        "button",
+        {
+          className: "add-btn",
+          onClick: () => {
+            if (inputValue.trim()) {
+              todos.push({ text: inputValue, completed: false });              
+              inputValue = "";
+              rerender(); // Re-render the UI with diff/patch
+            }
+          },
+        },
+        "add"
+      )
+    ), // end input section
+    ourFrame.createElement(
+      "section",
+      { className: "todos" },
+      ourFrame.createElement(
+        "ul",
+        null,
+        ...todos.map((todo) =>
+          ourFrame.createElement(
+            "li",
+            null,
+            ourFrame.createElement("span", null, todo.text),
+          )
+        )
+      )
+    ) // end todos section
+  );
 }
 
-function createTextElement(text) {
-  return {
-    type: "TEXT_ELEMENT",
-    props: {
-      nodeValue: text,
-      children: [],
-    },
-  }
+// Initial render
+function initialRender() {
+  currentApp = App();
+  ourFrame.render(currentApp, container);
 }
 
-function render(element, container) {
-  const dom = element.type == "TEXT_ELEMENT" ? document.createTextNode("") : document.createElement(element.type)
-  element.props.children.forEach(child =>
-    render(child, dom)
-  )
-  const isProperty = key => key !== "children"
-  Object.keys(element.props).filter(isProperty).forEach(name => {
-      dom[name] = element.props[name]
-    })
-  container.appendChild(dom)
+// Re-render using diff/patch
+function rerender() {  
+  const newApp = App();
+  const patches = diff(currentApp, newApp);
+  patch(container, patches);
+  currentApp = newApp; // Update the reference to current app
 }
 
-const ourFrame = { createElement, render }
-
-const element = ourFrame.createElement(
-  "div",
-  null,
-  ourFrame.createElement("h1", null, "Todos"),
-  ourFrame.createElement(
-    "section",
-    { className: "enterTodos" },
-    ourFrame.createElement("input", { type: "text", placeholder: "enter a todo" }),
-    ourFrame.createElement("button", null, "add")
-  )
-)
-
-// const newElement = ourFrame.createElement(
-//   "div",
-//   null,
-//   ourFrame.createElement("h1", null, "Todos"),
-//   ourFrame.createElement(
-//     "section",
-//     { className: "enterTodos" },
-//     ourFrame.createElement("input", { type: "text", placeholder: "enter a todo" }),
-//     ourFrame.createElement("button", null, "add")
-//   )
-//   // "input",
-//   // { id: "foo" },
-//   // ourFrame.createElement("a", null, "baz"),
-//   // ourFrame.createElement("b"),
-//   // ourFrame.createElement("c")
-// );
-
-console.log(element);
-
-ourFrame.render(element, container)
-
-// const patches = diff(element, newElement);
-// patch(container, patches);
+// Initialize the app
+initialRender();
