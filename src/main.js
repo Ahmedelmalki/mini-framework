@@ -1,6 +1,6 @@
 
-import { diff } from "./vdom/diff.js";
-import { patch } from "./vdom/patch.js";
+// import { diff } from "./vdom/diff.js";
+// import { patch } from "./vdom/patch.js";
 
 const container = document.getElementById("root")
 
@@ -10,9 +10,7 @@ function createElement(type, props, ...children) {
     props: {
       ...props,
       children: children.map(child =>
-        typeof child === "object"
-          ? child
-          : createTextElement(child)
+        typeof child === "object" ? child : createTextElement(child)
       ),
     },
   }
@@ -29,46 +27,51 @@ function createTextElement(text) {
 }
 
 function render(element, container) {
-  const dom =
-    element.type == "TEXT_ELEMENT"
-      ? document.createTextNode("")
-      : document.createElement(element.type)
+  const dom = element.type == "TEXT_ELEMENT" ? document.createTextNode("") : document.createElement(element.type)
   element.props.children.forEach(child =>
     render(child, dom)
   )
   const isProperty = key => key !== "children"
-  Object.keys(element.props)
-    .filter(isProperty)
-    .forEach(name => {
+  Object.keys(element.props).filter(isProperty).forEach(name => {
       dom[name] = element.props[name]
     })
-
   container.appendChild(dom)
 }
 
-const ourFrame = {
-  createElement,
-  render
-}
+const ourFrame = { createElement, render }
 
 const element = ourFrame.createElement(
   "div",
-  { id: "foo" },
-  ourFrame.createElement("a", null, "bar"),
-  ourFrame.createElement("b")
+  null,
+  ourFrame.createElement("h1", null, "Todos"),
+  ourFrame.createElement(
+    "section",
+    { className: "enterTodos" },
+    ourFrame.createElement("input", { type: "text", placeholder: "enter a todo" }),
+    ourFrame.createElement("button", null, "add")
+  )
 )
 
-const newElement = ourFrame.createElement(
-  "div",
-  { id: "foo" },
-  ourFrame.createElement("a", null, "baz"),
-  ourFrame.createElement("b"),
-  // ourFrame.createElement("c")
-);
+// const newElement = ourFrame.createElement(
+//   "div",
+//   null,
+//   ourFrame.createElement("h1", null, "Todos"),
+//   ourFrame.createElement(
+//     "section",
+//     { className: "enterTodos" },
+//     ourFrame.createElement("input", { type: "text", placeholder: "enter a todo" }),
+//     ourFrame.createElement("button", null, "add")
+//   )
+//   // "input",
+//   // { id: "foo" },
+//   // ourFrame.createElement("a", null, "baz"),
+//   // ourFrame.createElement("b"),
+//   // ourFrame.createElement("c")
+// );
 
 console.log(element);
 
 ourFrame.render(element, container)
 
-const patches = diff(element, newElement);
-patch(container, patches);
+// const patches = diff(element, newElement);
+// patch(container, patches);

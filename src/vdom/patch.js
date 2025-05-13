@@ -35,6 +35,7 @@ function applyPatches(node, patches) {
         break;
       case "PROPS":
         for (const key in patch.propPatches) {
+          if (key === "children") continue; // Skip illegal assignment
           if (patch.propPatches[key] === null) {
             node.removeAttribute(key);
           } else {
