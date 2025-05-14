@@ -1,0 +1,20 @@
+
+.todoapp {
+    background: #fff;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .2), 0 25px 50px 0 rgba(0, 0, 0, .1);
+    margin: 130px 0 40px;
+    position: relative;
+}
+
+.todoapp h1 {
+    color: #b83f45;
+    font-size: 80px;
+    font-weight: 200;
+    position: absolute;
+    text-align: center;
+    -webkit-text-rendering: optimizeLegibility;
+    -moz-text-rendering: optimizeLegibility;
+    text-rendering: optimizeLegibility;
+    top: -140px;
+    width: 100%;
+}

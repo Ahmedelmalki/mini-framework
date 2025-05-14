@@ -36,9 +36,19 @@ function applyPatches(node, patches) {
       case "PROPS":
         for (const key in patch.propPatches) {
           if (patch.propPatches[key] === null) {
-            node.removeAttribute(key);
+            if (key.startsWith("on") && typeof node[key] === "function") {
+              const eventType = key.slice(2).toLowerCase();
+              node.removeEventListener(eventType, node[key]);
+            } else {
+              node.removeAttribute(key);
+            }
           } else {
-            node[key] = patch.propPatches[key];
+            if (key.startsWith("on") && typeof patch.propPatches[key] === "function") {
+              const eventType = key.slice(2).toLowerCase();
+              node.addEventListener(eventType, patch.propPatches[key]);
+            } else {
+              node[key] = patch.propPatches[key];
+            }
           }
         }
         break;
@@ -54,7 +64,12 @@ function createElement(vNode) {
   const element = document.createElement(vNode.type);
   for (const prop in vNode.props) {
     if (prop !== "children") {
-      element[prop] = vNode.props[prop];
+      if (prop.startsWith("on") && typeof vNode.props[prop] === "function") {
+        const eventType = prop.slice(2).toLowerCase();
+        element.addEventListener(eventType, vNode.props[prop]);
+      } else {
+        element[prop] = vNode.props[prop];
+      }
     }
   }
 

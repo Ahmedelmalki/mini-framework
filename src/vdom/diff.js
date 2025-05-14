@@ -1,6 +1,7 @@
 export function diff(oldTree, newTree) {
   const patches = [];
   walk(oldTree, newTree, patches, 0);
+
   return patches;
 }
 
@@ -22,6 +23,8 @@ function walk(oldNode, newNode, patches, index) {
   } else {
     // Check for property changes
     const propPatches = diffProps(oldNode.props, newNode.props);
+    console.log(oldNode.props, newNode.props);
+    
     if (Object.keys(propPatches).length > 0) {
       patch.push({ type: "PROPS", propPatches });
     }
