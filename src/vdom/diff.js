@@ -125,3 +125,7 @@ function render(element, container) {
 }
 
 export const ourFrame = { createElement, render };
+
+/**************** state managment logic **************/
+
+

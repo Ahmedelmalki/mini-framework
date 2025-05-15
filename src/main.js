@@ -8,7 +8,27 @@ let inputValue = "";
 let todos = [];
 let currentApp = null; // Keep track of the current app state/virtual DOM
 
+let states = [];
+let stateCursor = 0;
+
+function useState(initialValue) {  
+  const currentIndex = stateCursor;
+  states[currentIndex] =
+  states[currentIndex] !== undefined ? states[currentIndex] : initialValue;
+  
+  function setState(newValue) {
+    console.log('newValue ==>', newValue);
+    states[currentIndex] = newValue;
+    rerender(); // Trigger UI re-render
+  }
+
+  stateCursor++; // Move to next state index
+  return [states[currentIndex], setState];
+}
+
 function App() {
+  stateCursor = 0; // Reset before each re-render
+  const [itemsLeft, setItemsLeft] = useState(todos.length);
   return ourFrame.createElement(
     "div",
     null,
@@ -27,12 +47,14 @@ function App() {
       ourFrame.createElement(
         "button",
         {
-          className: "add-btn",
+           className: "add-btn",
           onClick: () => {
+            console.log('add-btn clicked');
+            
             if (inputValue.trim()) {
-              todos.push({ text: inputValue, completed: false });              
+              todos.push({ text: inputValue, completed: false });
               inputValue = "";
-              rerender(); // Re-render the UI with diff/patch
+              setItemsLeft(todos.length); 
             }
           },
         },
@@ -49,12 +71,22 @@ function App() {
           ourFrame.createElement(
             "li",
             null,
-            ourFrame.createElement("span", null, todo.text),
+            ourFrame.createElement("span", null, todo.text)
           )
         )
       )
-    ) // end todos section
-  ); // end div
+    ), // end todos section
+    ourFrame.createElement(
+      "section",
+      { className: "btns-section" },
+      ourFrame.createElement(
+        "span",
+        null,
+        `${itemsLeft} items left`,
+      //  setItemsLeft(todos.length) 
+      ) // end items count
+    ) // end buttons section
+  ); // end App
 }
 
 // Initial render
@@ -64,7 +96,7 @@ function initialRender() {
 }
 
 // Re-render using diff/patch
-function rerender() {  
+function rerender() {
   const newApp = App();
   const patches = diff(currentApp, newApp);
   patch(container, patches);

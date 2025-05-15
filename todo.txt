@@ -1,3 +1,11 @@
+todo today :
+    move on to do some more functionalities (other buttons)
+    finish the dumn article
+    maybe some RE
+    some style
+
+
+
 Your framework needs to implement:
     DOM abstraction
     Routing system
@@ -11,3 +19,8 @@ Code examples and explanations on how to:
     Add attributes to an element
 
 note : You have to take into account the events, children and attributes of each element of the DOM.
+
+      ourFrame.createElement("button"), // end all button
+      ourFrame.createElement("button"), // end active button
+      ourFrame.createElement("button"), // end completed
+      ourFrame.createElement("button"), // end clear completed
