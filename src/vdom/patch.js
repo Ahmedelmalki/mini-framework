@@ -24,8 +24,11 @@ function applyPatches(node, patches) {
         break;
       case "ADD":
         const newChild = createElement(patch.newNode);
-        node.appendChild(newChild);
-        //That way, the patch adds a sibling in the correct spot, not a child of the current node
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          node.appendChild(newChild);
+        } else if (node.parentNode) {
+          node.parentNode.insertBefore(newChild, node.nextSibling);
+        }
         break;
       case "REPLACE":
         const replacedNode = createElement(patch.newNode);

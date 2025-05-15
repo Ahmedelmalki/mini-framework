@@ -13,7 +13,7 @@ function walk(oldNode, newNode, patches, index) {
     patch.push({ type: "REMOVE", index });
   } else if (!oldNode) {
     // Node added
-      console.log("New node added:", newNode);
+      // console.log("New node added:", newNode);
     patch.push({ type: "ADD", newNode, index: index });
   } else if (oldNode.type !== newNode.type) {
     // Node replaced
@@ -82,6 +82,7 @@ function createElement(type, props, ...children) {
         typeof child === "object" ? child : createTextElement(child)
       ),
     },
+    key: props?.key ?? null, // will be used in diffing algo
   };
 }
 
@@ -96,8 +97,7 @@ function createTextElement(text) {
 }
 
 function render(element, container) {
-  const dom =
-    element.type === "TEXT_ELEMENT"
+  const dom = element.type === "TEXT_ELEMENT"
       ? document.createTextNode(element.props.nodeValue)
       : document.createElement(element.type);
 
@@ -124,19 +124,4 @@ function render(element, container) {
   container.appendChild(dom);
 }
 
-// const newEl = (name, args = {}, ...children ) =>{
-//   const el = document.createElement(name)
-
-//   for (const arg of args) {
-//     el.setAttribute(arg,args[arg])
-//   }
-
-//   if (children) {
-//     for (const child of children) {
-//       el.appendChild(child)
-//     }
-//   }
-//   return el
-// }
-// newEl('div',{class: 'box'})
 export const ourFrame = { createElement, render };

@@ -54,7 +54,7 @@ function App() {
         )
       )
     ) // end todos section
-  );
+  ); // end div
 }
 
 // Initial render
