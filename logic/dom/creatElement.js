@@ -16,4 +16,30 @@ export function mfCreateElement(vnode) {
   
     return el;
   }
+
+export const createEl = (tagName ,attrs = {}, ...children) =>  {
+  const tag = document.createElement(tagName);
+
+  if (attrs) {
+    for (const [key, value] of Object.entries(attrs)) {
+      if (key.startsWith("on") && typeof value == "function") {
+        tag.addEventListener(key.slice(2).toLowerCase(), value);
+      } else {
+        tag.setAttribute(key,value);
+      }
+    }
+  }
+
+  if (children) {
+    children.flat().forEach(child=> {
+      if (typeof child == "string" || typeof child == "number") {
+        tag.appendChild(document.createTextNode(child))
+      } else {
+        tag.appendChild(child)
+      }
+    })
+  }
+
+  return tag
+}
   
