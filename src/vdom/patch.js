@@ -1,5 +1,4 @@
 export function patch(dom, patches) {
-  //const index = { value: 0 };
   walk(dom, patches, 0);
 }
 
@@ -56,32 +55,4 @@ function applyPatches(node, patches) {
         break;
     }
   });
-}
-
-function createElement(vNode) {
-  if (vNode.type === "TEXT_ELEMENT") {
-    return document.createTextNode(vNode.props.nodeValue);
-  }
-
-  const element = document.createElement(vNode.type);
-
-  for (const prop in vNode.props) {
-    if (prop === "children") continue;
-    const value = vNode.props[prop];
-
-    if (prop.startsWith("on") && typeof value === "function") {
-      const eventType = prop.toLowerCase().slice(2);
-      element.addEventListener(eventType, value);
-    } else if (prop === "value" || prop === "checked") {
-      element[prop] = value;
-    } else {
-      element.setAttribute(prop, value);
-    }
-  }
-
-  vNode.props.children.forEach((child) => {
-    element.appendChild(createElement(child));
-  });
-
-  return element;
 }

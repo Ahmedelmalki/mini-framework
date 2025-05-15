@@ -1,6 +1,4 @@
-import { diff } from "./vdom/diff.js";
-import { patch } from "./vdom/patch.js";
-import { ourFrame } from "./vdom/diff.js";
+import { ourFrame } from "./vdom/framework.js";
 
 const container = document.getElementById("root");
 
@@ -89,19 +87,28 @@ function App() {
   ); // end App
 }
 
+
 // Initial render
 function initialRender() {
   currentApp = App();
   ourFrame.render(currentApp, container);
 }
 
-// Re-render using diff/patch
+// Re-render using improved diff/patch
 function rerender() {
   const newApp = App();
-  const patches = diff(currentApp, newApp);
-  patch(container, patches);
-  currentApp = newApp; // Update the reference to current app
+  ourFrame.patch(container, currentApp, newApp);
+  currentApp = newApp;
 }
 
 // Initialize the app
 initialRender();
+
+
+/*
+working on 
+      ourFrame.createElement("button"), // end all button
+      ourFrame.createElement("button"), // end active button
+      ourFrame.createElement("button"), // end completed
+      ourFrame.createElement("button"), // end clear completed
+*/
