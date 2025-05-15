@@ -1,3 +1,4 @@
+import { createEl, setChild } from "../logic/dom/creatElement.js";
 function test() {
   const test = document.getElementById("test");
   const p = document.createElement("p");
@@ -31,4 +32,9 @@ function test2(){
 }
 
 test2()
-
+let count = 0
+const btn = createEl("button",{
+  "onclick": ()=> console.log(`hello ${count += 1}`),
+  "class": "countBtn"
+},`click me 2`)
+setChild(document.body, btn)

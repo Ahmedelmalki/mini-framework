@@ -17,15 +17,16 @@ export function mfCreateElement(vnode) {
     return el;
   }
 
-export const createEl = (tagName ,attrs = {}, ...children) =>  {
-  const tag = document.createElement(tagName);
+export const createEl = (tagName ,attrs = {}, ...children) =>  {    
+  const tagEl = document.createElement(tagName);
 
   if (attrs) {
     for (const [key, value] of Object.entries(attrs)) {
       if (key.startsWith("on") && typeof value == "function") {
-        tag.addEventListener(key.slice(2).toLowerCase(), value);
+        tagEl[key] = null;
+        tagEl[key] = value;
       } else {
-        tag.setAttribute(key,value);
+        tagEl.setAttribute(key,value);
       }
     }
   }
@@ -33,13 +34,14 @@ export const createEl = (tagName ,attrs = {}, ...children) =>  {
   if (children) {
     children.flat().forEach(child=> {
       if (typeof child == "string" || typeof child == "number") {
-        tag.appendChild(document.createTextNode(child))
+        tagEl.appendChild(document.createTextNode(child))
       } else {
-        tag.appendChild(child)
+        tagEl.appendChild(child)
       }
     })
   }
 
-  return tag
+  return tagEl
 }
-  
+
+export const setChild = (parent, child) => parent.appendChild(child);
