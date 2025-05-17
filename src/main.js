@@ -81,8 +81,11 @@ function App() {
         "span",
         null,
         `${itemsLeft} items left`,
-      //  setItemsLeft(todos.length) 
-      ) // end items count
+      ), // end items count
+      ourFrame.createElement("button",null,'all'), // end all button
+      ourFrame.createElement("button",null,'active'), // end active button
+      ourFrame.createElement("button",null,'completed'), // end completed
+      ourFrame.createElement("button",null,'clear completed'), // end clear completed
     ) // end buttons section
   ); // end App
 }
@@ -104,11 +107,5 @@ function rerender() {
 // Initialize the app
 initialRender();
 
+// todo routing system
 
-/*
-working on 
-      ourFrame.createElement("button"), // end all button
-      ourFrame.createElement("button"), // end active button
-      ourFrame.createElement("button"), // end completed
-      ourFrame.createElement("button"), // end clear completed
-*/

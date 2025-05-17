@@ -1,7 +1,6 @@
 todo today :
-    move on to do some more functionalities (other buttons)
     finish the dumn article
-    maybe some RE
+    move on to do some more functionalities (other buttons)
     some style
 
 
@@ -24,3 +23,5 @@ note : You have to take into account the events, children and attributes of each
       ourFrame.createElement("button"), // end active button
       ourFrame.createElement("button"), // end completed
       ourFrame.createElement("button"), // end clear completed
+
+
