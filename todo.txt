@@ -1,5 +1,0 @@
-Your framework needs to implement:
-    DOM abstraction
-    Routing system
-    State management
-    Event handling
