@@ -2,20 +2,21 @@ import { ourFrame } from "./vdom/framework.js";
 
 const container = document.getElementById("root");
 
-let inputValue = "";
-let todos = [];
+//let inputValue = "";
+// let todos = [];
 let currentApp = null; // Keep track of the current app state/virtual DOM
 
 let states = [];
 let stateCursor = 0;
 
-function useState(initialValue) {  
+function useState(initialValue) {
+  // todo: move this to mf file
   const currentIndex = stateCursor;
   states[currentIndex] =
-  states[currentIndex] !== undefined ? states[currentIndex] : initialValue;
-  
+    states[currentIndex] !== undefined ? states[currentIndex] : initialValue;
+
   function setState(newValue) {
-    console.log('newValue ==>', newValue);
+    console.log("newValue ==>", newValue);
     states[currentIndex] = newValue;
     rerender(); // Trigger UI re-render
   }
@@ -26,7 +27,20 @@ function useState(initialValue) {
 
 function App() {
   stateCursor = 0; // Reset before each re-render
+  const [todos, setTodos] = useState([]);
   const [itemsLeft, setItemsLeft] = useState(todos.length);
+  const [inputValue, setInput] = useState("");
+
+  const addTodo = () => {
+    if (!inputValue.trim()) return;
+    setTodos([...todos, { text: inputValue.trim(), completed: false }]);
+    setInput("");
+  };
+
+  const clearCompleted = () => {
+    setTodos(todos.filter((todo) => !todo.completed));
+  };
+
   return ourFrame.createElement(
     "div",
     null,
@@ -39,21 +53,15 @@ function App() {
         value: inputValue,
         placeholder: "enter a todo",
         onInput: (e) => {
-          inputValue = e.target.value;
+          setInput(e.target.value);
         },
       }),
       ourFrame.createElement(
         "button",
         {
-           className: "add-btn",
+          className: "add-btn",
           onClick: () => {
-            console.log('add-btn clicked');
-            
-            if (inputValue.trim()) {
-              todos.push({ text: inputValue, completed: false });
-              inputValue = "";
-              setItemsLeft(todos.length); 
-            }
+            addTodo();
           },
         },
         "add"
@@ -77,19 +85,14 @@ function App() {
     ourFrame.createElement(
       "section",
       { className: "btns-section" },
-      ourFrame.createElement(
-        "span",
-        null,
-        `${itemsLeft} items left`,
-      ), // end items count
-      ourFrame.createElement("button",null,'all'), // end all button
-      ourFrame.createElement("button",null,'active'), // end active button
-      ourFrame.createElement("button",null,'completed'), // end completed
-      ourFrame.createElement("button",null,'clear completed'), // end clear completed
+      ourFrame.createElement("span", null, `${itemsLeft} items left`), // end items count
+      ourFrame.createElement("button", null, "all"), // end all button
+      ourFrame.createElement("button", null, "active"), // end active button
+      ourFrame.createElement("button", null, "completed"), // end completed
+      ourFrame.createElement("button", null, "clear completed") // end clear completed
     ) // end buttons section
   ); // end App
 }
-
 
 // Initial render
 function initialRender() {
@@ -108,4 +111,3 @@ function rerender() {
 initialRender();
 
 // todo routing system
-
