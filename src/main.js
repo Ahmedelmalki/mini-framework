@@ -1,35 +1,15 @@
+
+
 import { ourFrame } from "./vdom/framework.js";
-
-const container = document.getElementById("root");
-
-//let inputValue = "";
-// let todos = [];
+const container = document.getElementById("root"); // root node 
 let currentApp = null; // Keep track of the current app state/virtual DOM
 
-let states = [];
-let stateCursor = 0;
-
-function useState(initialValue) {
-  // todo: move this to mf file
-  const currentIndex = stateCursor;
-  states[currentIndex] =
-    states[currentIndex] !== undefined ? states[currentIndex] : initialValue;
-
-  function setState(newValue) {
-    console.log("newValue ==>", newValue);
-    states[currentIndex] = newValue;
-    rerender(); // Trigger UI re-render
-  }
-
-  stateCursor++; // Move to next state index
-  return [states[currentIndex], setState];
-}
-
 function App() {
-  stateCursor = 0; // Reset before each re-render
-  const [todos, setTodos] = useState([]);
-  const [itemsLeft, setItemsLeft] = useState(todos.length);
-  const [inputValue, setInput] = useState("");
+  ourFrame.resetCursor() // Reset before each re-render
+
+  const [todos, setTodos] = ourFrame.useState([]);
+  const [inputValue, setInput] = ourFrame.useState("");
+  const itemsLeft = todos.filter((todo) => !todo.completed).length;
 
   const addTodo = () => {
     if (!inputValue.trim()) return;
@@ -85,11 +65,19 @@ function App() {
     ourFrame.createElement(
       "section",
       { className: "btns-section" },
-      ourFrame.createElement("span", null, `${itemsLeft} items left`), // end items count
-      ourFrame.createElement("button", null, "all"), // end all button
-      ourFrame.createElement("button", null, "active"), // end active button
-      ourFrame.createElement("button", null, "completed"), // end completed
-      ourFrame.createElement("button", null, "clear completed") // end clear completed
+      ourFrame.createElement("span", null, `${itemsLeft} items left`),
+      ourFrame.createElement("button", null, "all"),
+      ourFrame.createElement("button", null, "active"),
+      ourFrame.createElement("button", null, "completed"),
+      ourFrame.createElement(
+        "button",
+        {
+          onClick: () => {
+            clearCompleted();
+          },
+        },
+        "clear completed"
+      )
     ) // end buttons section
   ); // end App
 }
@@ -100,14 +88,16 @@ function initialRender() {
   ourFrame.render(currentApp, container);
 }
 
-// Re-render using improved diff/patch
-function rerender() {
+import { injectRerender } from "./vdom/framework.js";
+injectRerender(rerender); // difing this shit in the call stack
+
+function rerender() { //here
   const newApp = App();
   ourFrame.patch(container, currentApp, newApp);
   currentApp = newApp;
 }
 
+
 // Initialize the app
 initialRender();
 
-// todo routing system

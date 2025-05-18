@@ -1,3 +1,4 @@
+/******************** element creation and event handling *****************/
 export function diff(oldTree, newTree){
   return function applyPatches(dom){
     if (!oldTree){
@@ -132,15 +133,46 @@ function createVElement(type, props = {}, ...children) {
   };
 }
 
-// Render and patch functions
+/********************* rendering logic **********************/
 function render(element, container) {
   const dom = createElement(element);
   container.appendChild(dom);
   return dom;
 }
 
+/********************* state managment logic ******************/
+let states = [];
+let stateCursor = 0;
+let rerenderFn = null;
+
+function useState(initialValue) { 
+  const currentIndex = stateCursor;
+  states[currentIndex] =
+  states[currentIndex] !== undefined ? states[currentIndex] : initialValue;
+
+  function setState(newValue) {
+    console.log("newValue ==>", newValue);
+    states[currentIndex] = newValue;
+    if (rerenderFn) rerenderFn();
+  }
+
+  stateCursor++; // Move to next state index
+  return [states[currentIndex], setState];
+}
+
+function resetCursor() {
+  stateCursor = 0;
+}
+
+export function injectRerender(fn) { 
+  rerenderFn = fn;
+}
+
+// grouping funcs 
 export const ourFrame = { 
   createElement: createVElement,
   render,
-  patch
+  patch,
+  useState,
+  resetCursor,
 };
