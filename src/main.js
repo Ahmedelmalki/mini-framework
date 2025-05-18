@@ -152,7 +152,6 @@ function createDom(fiber) {
       : document.createElement(fiber.type);
 
   updateDom(dom, {}, fiber.props);
-
   return dom;
 }
 
@@ -160,6 +159,7 @@ const isEvent = key => key.startsWith("on");
 const isProperty = key => key !== "children" && !isEvent(key);
 const isNew = (prev, next) => key => prev[key] !== next[key];
 const isGone = (prev, next) => key => !(key in next);
+
 function updateDom(dom, prevProps, nextProps) {
   //Remove old or changed event listeners
   Object.keys(prevProps)
@@ -250,9 +250,12 @@ let nextUnitOfWork = null;
 let currentRoot = null;
 let wipRoot = null;
 let deletions = null;
+console.log(wipRoot);
 
 function workLoop(deadline) {
   let shouldYield = false;
+  // console.log("test");
+  
   while (nextUnitOfWork && !shouldYield) {
     nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
     shouldYield = deadline.timeRemaining() < 1;
@@ -287,7 +290,7 @@ function performUnitOfWork(fiber) {
 }
 
 let wipFiber = null;
-console.log(wipFiber);
+// console.log(wipFiber);
 
 let hookIndex = null;
 
@@ -304,6 +307,8 @@ function useState(initial) {
     wipFiber.alternate &&
     wipFiber.alternate.hooks &&
     wipFiber.alternate.hooks[hookIndex];
+    console.log("old", wipFiber?.alternate, wipFiber.alternate?.hooks , wipFiber.alternate?.hooks[hookIndex]);
+    
   const hook = {
     state: oldHook ? oldHook.state : initial,
     queue: []
@@ -311,10 +316,13 @@ function useState(initial) {
 
   const actions = oldHook ? oldHook.queue : [];
   actions.forEach(action => {
-    hook.state = action(hook.state);
+    hook.state = typeof action === "function" ? action(hook.state) : action;
   });
 
   const setState = action => {
+    console.log(action);
+    
+    console.log(wipFiber.hooks);
     hook.queue.push(action);
     wipRoot = {
       dom: currentRoot.dom,
@@ -326,7 +334,11 @@ function useState(initial) {
   };
 
   wipFiber.hooks.push(hook);
+  console.log("hook " ,wipFiber.hooks);
+  
   hookIndex++;
+  console.log("index ",hookIndex);
+  
   return [hook.state, setState];
 }
 
@@ -396,13 +408,18 @@ const Didact = {
 
 
 function Counter() {
-  const [state, setState] = Didact.useState(1);
+  console.log(wipFiber);
+  
+  const [count, setCount] = Didact.useState(1);
+  console.log(count);
+
   const element = Didact.createElement(
     "h1",
-    { style: "user-select: none",
-      onclick:() => setState(c => c + 1)
-     },
-  "Count " + state
+    {
+      style: "user-select: none",
+      onclick: () => setCount(c => c + 1)
+    },
+    "Count " + count
   )
   return element;
 }
