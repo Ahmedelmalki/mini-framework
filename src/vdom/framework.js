@@ -1,56 +1,57 @@
 /******************** element creation and event handling *****************/
-export function diff(oldTree, newTree){
-  return function applyPatches(dom){
-    if (!oldTree){
-      return dom.appendChild(createElement(newTree))
+export function diff(oldTree, newTree) {
+  return function applyPatches(dom) {
+    if (!oldTree) {
+      return dom.appendChild(createElement(newTree));
     }
 
-    if (!newTree){
-      return dom.parentNode.removeChild(dom)
+    if (!newTree) {
+      return dom.parentNode.removeChild(dom);
     }
 
-    if (oldTree.type !== newTree.type){
-      return dom.parentNode.replaceChild(createElement(newTree), dom)
+    if (oldTree.type !== newTree.type) {
+      return dom.parentNode.replaceChild(createElement(newTree), dom);
     }
 
-    if (newTree.type === "TEXT_ELEMENT"){
-      if (oldTree.props.nodeValue !== newTree.props.nodeValue){
+    if (newTree.type === "TEXT_ELEMENT") {
+      if (oldTree.props.nodeValue !== newTree.props.nodeValue) {
         dom.nodeValue = newTree.props.nodeValue;
       }
       return;
     }
 
     // update properties
-    updateProps(dom, oldTree.props, newTree.props)
+    updateProps(dom, oldTree.props, newTree.props);
 
     const oldChildren = oldTree.props.children || [];
     const newChildren = newTree.props.children || [];
-    
+
     const maxLnt = Math.max(oldChildren.length, newChildren.length);
-    for (let i = 0; i < maxLnt; i++){
-      if (i < oldChildren.length && i < newChildren.length){ // update existing child
-        diff(oldChildren[i], newChildren[i])(dom.childNodes[i])
-      } else if (i < newChildren.length){ 
-        dom.appendChild(createElement(newChildren[i])) // add new child
-      } else if (i < oldChildren.length ){ 
-        dom.removeChild(dom.childNodes[i]) // remove old child
+    for (let i = 0; i < maxLnt; i++) {
+      if (i < oldChildren.length && i < newChildren.length) {
+        // update existing child
+        diff(oldChildren[i], newChildren[i])(dom.childNodes[i]);
+      } else if (i < newChildren.length) {
+        dom.appendChild(createElement(newChildren[i])); // add new child
+      } else if (i < oldChildren.length) {
+        dom.removeChild(dom.childNodes[i]); // remove old child
       }
     }
-  }
+  };
 }
 
-function updateProps(dom, oldProps, newProps){
-  for (const key in newProps){
+function updateProps(dom, oldProps, newProps) {
+  for (const key in newProps) {
     if (key === "children") continue;
 
-    if (oldProps[key] !== newProps[key]){
-      if (key.startsWith('on') && typeof newProps[key] === "function"){
+    if (oldProps[key] !== newProps[key]) {
+      if (key.startsWith("on") && typeof newProps[key] === "function") {
         const eventType = key.toLowerCase().substring(2);
-        if (oldProps[key]){
+        if (oldProps[key]) {
           dom.removeEventListener(eventType, oldProps[key]);
         }
-        dom.addEventListener(eventType, newProps[key])
-      } else if (key === 'value' || key === 'checked'){
+        dom.addEventListener(eventType, newProps[key]);
+      } else if (key === "value" || key === "checked") {
         dom[key] = newProps[key];
       } else {
         dom.setAttribute(key, newProps[key]);
@@ -58,7 +59,7 @@ function updateProps(dom, oldProps, newProps){
     }
   }
 
-  for (const key in oldProps){
+  for (const key in oldProps) {
     if (key === "children") continue;
     if (!(key in newProps)) {
       if (key.startsWith("on")) {
@@ -73,17 +74,17 @@ function updateProps(dom, oldProps, newProps){
 
 export function createElement(vNode) {
   if (!vNode) return null;
-  
+
   if (vNode.type === "TEXT_ELEMENT") {
     return document.createTextNode(vNode.props.nodeValue);
   }
-  
+
   const element = document.createElement(vNode.type);
-  
+
   // Set properties
   for (const key in vNode.props) {
     if (key === "children") continue;
-    
+
     const value = vNode.props[key];
     if (key.startsWith("on") && typeof value === "function") {
       const eventType = key.toLowerCase().substring(2);
@@ -94,16 +95,14 @@ export function createElement(vNode) {
       element.setAttribute(key, value);
     }
   }
-  
+
   // Create and append children
-  (vNode.props.children || []).forEach(child => {
+  (vNode.props.children || []).forEach((child) => {
     element.appendChild(createElement(child));
   });
-  
+
   return element;
 }
-
-
 
 export function patch(container, oldTree, newTree) {
   const patchFn = diff(oldTree, newTree);
@@ -126,7 +125,7 @@ function createVElement(type, props = {}, ...children) {
     type,
     props: {
       ...props,
-      children: children.map(child => 
+      children: children.map((child) =>
         typeof child === "object" ? child : createTextElement(child)
       ),
     },
@@ -145,10 +144,12 @@ let states = [];
 let stateCursor = 0;
 let rerenderFn = null;
 
-function useState(initialValue) { 
+function useState(initialValue) {
   const currentIndex = stateCursor;
-  states[currentIndex] =
-  states[currentIndex] !== undefined ? states[currentIndex] : initialValue;
+
+  if (states[currentIndex] == undefined) {
+    states[currentIndex] = initialValue;
+  } // else matdir walo
 
   function setState(newValue) {
     console.log("newValue ==>", newValue);
@@ -164,15 +165,93 @@ function resetCursor() {
   stateCursor = 0;
 }
 
-export function injectRerender(fn) { 
+export function injectRerender(fn) {
   rerenderFn = fn;
 }
 
-// grouping funcs 
-export const ourFrame = { 
-  createElement: createVElement,
-  render,
-  patch,
+export const state = {
   useState,
   resetCursor,
 };
+
+
+/***************** side effect logic ****************/
+let effects = [];
+let currentIndex = 0;
+
+function useEffect(callback, deps) {
+  const previous = effects[currentIndex];
+
+  // const hasChanged = !previous || deps.some((dep, i) => dep !== previous.deps[i]);
+  let hasChanged;
+  
+  if (!previous) {
+    hasChanged = true;
+  } else {
+    hasChanged = false;
+    for (let i = 0; i < deps.length; i++) {
+      if (deps[i] !== previous.deps[i]) {
+        hasChanged = true;
+        break;
+      }
+    }
+  }
+
+  if (hasChanged) {
+    if (previous && typeof previous.cleanup === "function") {
+      previous.cleanup(); // cleanup previous effect
+    }
+
+    const cleanup = callback();
+    effects[currentIndex] = { deps, cleanup };
+  }
+
+  currentIndex++;
+}
+
+function resetEffects() {
+  // reset before each render cycle
+  currentIndex = 0;
+}
+
+export const effect = {
+  useEffect,
+  resetEffects,
+};
+
+/***************** routing logic ****************/
+function useLocation() {
+  const [loc, setLoc] = useState(window.location.pathname);
+
+  useEffect(() => {
+    const update = () => setLoc(window.location.pathname);
+    window.addEventListener("popstate", update);
+    return () => window.removeEventListener("popstate", update);
+  }, []);
+
+  return loc;
+}
+
+function useNavigate() {
+  return (to) => {
+    window.history.pushState(null, "", to);
+    dispatchEvent(new PopStateEvent("popstate"));
+  };
+}
+
+export const route = {
+  useLocation,
+  useNavigate,
+};
+
+// grouping funcs
+export const ourFrame = {
+  createElement: createVElement,
+  render,
+  patch,
+};
+
+
+
+
+
