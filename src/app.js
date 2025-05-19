@@ -1,6 +1,6 @@
-import { ourFrame } from "./vdom/framework.js";
-import { state } from "./vdom/framework.js";
-import { route } from "./vdom/framework.js";
+import { ourFrame } from "../framework/dom.js";
+import { state } from "../framework/state.js";
+import { route } from "../framework/route.js";
 
 export default function App() {
   state.resetCursor(); // Reset before each re-render
@@ -22,7 +22,7 @@ export default function App() {
   // link each button to its rout
   const location = route.useLocation();
   const navigate = route.useNavigate();
-  console.log(location, navigate);
+  //console.log(location, navigate);
 
   const currentPath = location;
   let filter = "all";
