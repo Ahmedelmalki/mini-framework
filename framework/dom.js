@@ -3,12 +3,12 @@ const render = (child, parent) => parent.appendChild(child);
 const createVNode = (tagName, attrs = {}, children = []) => {
   return {
     name: tagName,
-    attrs,
-    children,
+    attrs: attrs,
+    children: children,
   };
 };
 
-const createDom = (tagName, attrs = {}, ...children) => {
+const createEl = (tagName, attrs = {}, ...children) => {
     const el = document.createElement(tagName);
 
     if(attrs) {
@@ -24,16 +24,41 @@ const createDom = (tagName, attrs = {}, ...children) => {
 
     if (children) {
         children.forEach((child) => {
-            if (typeof child === "string") {
+            if (typeof child === "string" || typeof child == "number") {
                 el.appendChild(document.createTextNode(child));
-            } else if (child instanceof Node) {
-                el.appendChild(child);
-            } else if (Array.isArray(child)) {
-                child.forEach((c) => el.appendChild(c));
+            } else {
+                const childDom = createEl(child.name,child.attrs,...child.children)
+                el.appendChild(childDom);
             }
         });
     }
     return el;
 }
 
-export { render, createVNode };
+const createDom = (vdom) => {
+    const el = document.createElement(vdom.name);
+    if(vdom.attrs) {
+        for (const [key, value] of Object.entries(vdom.attrs)) {
+            if (key.startsWith("on") && typeof value == "function") {
+                el[key] = null
+                el[key] = value
+            } else {
+                el.setAttribute(key, value)
+            }
+        }
+    }
+    if (vdom.children) {
+        vdom.children.forEach((child) => {
+            if (typeof child == "string" || typeof child == "number") {
+                el.appendChild(document.createTextNode(child));
+            } else {
+                const childDom = createEl(child.name,child.attrs,...child.children)
+                el.appendChild(childDom);
+            }
+        });
+    }
+    return el;
+}
+
+
+export { render, createVNode, createEl, createDom };
