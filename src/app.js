@@ -1,4 +1,4 @@
-import { createVNode, render, createDom } from "../framework/dom.js";
+import { addNode, render, createDom } from "../framework/dom.js";
 
 const vdom = {
   name: "main",
@@ -6,31 +6,14 @@ const vdom = {
     class: "container",
   },
   children: [
-    createVNode(
-      "h1",
-      {
-        class: "title",
-      },
-      ["Hello World!"]
-    ),
-    createVNode(
-      "section",
-      {
-        class: "list",
-      },
+    addNode("h1",{class: "title",},["Hello World!"]),
+    addNode("section",{class: "list"},
       [
-        createVNode(
-          "h2",
-          {
-            class: "title2",
-          },
+        addNode("h2",{class: "title2"},
           [
-            "hello in zone01!",
-            {
-              name: "span",
-              attrs: { class: "red" },
-              children: ["oujda"],
-            },
+            "hello in ",
+            addNode("span",{ class: "blue" },["zone01!"]),
+            addNode("span",{ class: "red" },["oujda"])
           ]
         ),
       ]

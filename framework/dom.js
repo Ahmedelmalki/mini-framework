@@ -1,12 +1,13 @@
 const render = (child, parent) => parent.appendChild(child);
 
-const createVNode = (tagName, attrs = {}, children = []) => {
+const addNode = (tagName, attrs = {}, children = []) => {
   return {
     name: tagName,
     attrs: attrs,
     children: children,
   };
 };
+
 
 const createEl = (tagName, attrs = {}, ...children) => {
     const el = document.createElement(tagName);
@@ -61,4 +62,4 @@ const createDom = (vdom) => {
 }
 
 
-export { render, createVNode, createEl, createDom };
+export { render, addNode, createEl, createDom };
