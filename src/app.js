@@ -22,7 +22,8 @@ export default function App() {
   // link each button to its rout
   const location = route.useLocation();
   const navigate = route.useNavigate();
-  //console.log(location, navigate);
+//  debugger;
+  console.log('location ==>',location);
 
   const currentPath = location;
   let filter = "all";
@@ -77,7 +78,7 @@ export default function App() {
       )
     ), // end todos section
     ourFrame.createElement(
-      "section",
+      "section", // can i separate this block of code ??
       { className: "btns-section" },
       ourFrame.createElement("span", null, `${itemsLeft} items left`),
       ourFrame.createElement(

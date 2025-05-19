@@ -22,7 +22,6 @@ function useEffect(callback, deps) {
     if (previous && typeof previous.cleanup === "function") {
       previous.cleanup(); // cleanup previous effect
     }
-
     const cleanup = callback();
     effects[currentIndex] = { deps, cleanup };
   }
