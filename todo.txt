@@ -3,3 +3,33 @@ Your framework needs to implement:
     Routing system
     State management
     Event handling
+
+
+
+
+=====>  mini-frame-work/
+│
+├── /src
+│   ├── core/
+│   │   ├── dom.js         
+│   │   ├── state.js       
+│   │   ├── router.js     
+│   │   └── events.js      
+│   │
+│   ├── framework.js    
+│   └── index.js           
+│
+├── /public
+│   └── index.html
+│
+├── /docs
+│   └── README.md    
+│
+├── /todoMVC           
+│   ├── todo.js
+│   └── todo.css
+│
+└── package.json
+
+
+// 
