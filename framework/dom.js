@@ -1,6 +1,11 @@
 /******************** element creation and event handling *****************/
 export function diff(oldTree, newTree) {
   return function applyPatches(dom) {
+    if (!dom) {
+      console.warn("DOM element is null or undefined");
+      return;
+    }
+
     if (!oldTree) {
       return dom.appendChild(createElement(newTree));
     }
@@ -29,8 +34,11 @@ export function diff(oldTree, newTree) {
     const maxLnt = Math.max(oldChildren.length, newChildren.length);
     for (let i = 0; i < maxLnt; i++) {
       if (i < oldChildren.length && i < newChildren.length) {
-        // update existing child
-        diff(oldChildren[i], newChildren[i])(dom.childNodes[i]);
+        if (dom.childNodes[i]) {
+          diff(oldChildren[i], newChildren[i])(dom.childNodes[i]);
+        } else {
+          dom.appendChild(createElement(newChildren[i]));
+        }
       } else if (i < newChildren.length) {
         dom.appendChild(createElement(newChildren[i])); // add new child
       } else if (i < oldChildren.length) {
@@ -105,6 +113,10 @@ export function createElement(vNode) {
 }
 
 export function patch(container, oldTree, newTree) {
+  if (!container) {
+    console.warn("container is null or undefined");
+    return;
+  }
   const patchFn = diff(oldTree, newTree);
   patchFn(container.firstChild || container);
 }
