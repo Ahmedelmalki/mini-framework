@@ -3,3 +3,26 @@ Your framework needs to implement:
     Routing system
     State management
     Event handling
+
+div (index: 0)
+├── nav (index: 1)          // Wrong! Should include its descendants
+│   ├── TEXT "Menu" (???)   // Index lost
+│   └── a (???)             // Index lost
+│       └── TEXT "Home" (???) // Index lost
+├── main (index: 2)         // Wrong! Should be 5
+    ├── h1 (???)            // Index lost
+    │   └── TEXT "Title" (???) // Index lost
+    └── p (???)             // Index lost
+        └── TEXT "Content" (???) // Index lost
+
+//the code example
+        div (index: 0)
+├── nav (index: 1)
+│   ├── TEXT "Menu" (index: 2)
+│   └── a (index: 3)
+│       └── TEXT "Home" (index: 4)
+├── main (index: 5)
+    ├── h1 (index: 6)
+    │   └── TEXT "Title" (index: 7)
+    └── p (index: 8)
+        └── TEXT "Content" (index: 9)

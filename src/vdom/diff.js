@@ -1,6 +1,7 @@
 export function diff(oldTree, newTree) {
   const patches = [];
   walk(oldTree, newTree, patches, 0);
+console.log("patches",patches);
 
   return patches;
 }
@@ -19,6 +20,8 @@ function walk(oldNode, newNode, patches, index) {
     patch.push({ type: "REPLACE", newNode });
   } else if (oldNode.type === "TEXT_ELEMENT" && oldNode.props.nodeValue !== newNode.props.nodeValue) {
     // Text content changed
+    console.log("text",  newNode.props.nodeValue);
+    
     patch.push({ type: "TEXT", newNode });
   } else {
     // Check for property changes
@@ -59,13 +62,31 @@ function diffProps(oldProps, newProps) {
 
   return patches;
 }
-
 function diffChildren(oldNode, newNode, patches, index) {
   const oldChildren = oldNode.props.children || [];
   const newChildren = newNode.props.children || [];
-  const max = Math.max(oldChildren.length, newChildren.length);
+  let currentIndex = index;
 
-  for (let i = 0; i < max; i++) {
-    walk(oldChildren[i], newChildren[i], patches, ++index);
+  // Filter out null children before diffing
+  const filteredOldChildren = oldChildren.filter(child => child !== null);
+  const filteredNewChildren = newChildren.filter(child => child !== null);
+
+  for (let i = 0; i < Math.max(filteredOldChildren.length, filteredNewChildren.length); i++) {
+    currentIndex += 1;
+    walk(filteredOldChildren[i], filteredNewChildren[i], patches, currentIndex);
+    if (filteredOldChildren[i]?.props?.children) {
+      currentIndex += countDescendants(filteredOldChildren[i]);
+    }
   }
+}
+
+
+function countDescendants(node) {
+  if (!node || !node.props || !node.props.children) return 0;
+  let count = 0;
+  for (const child of node.props.children) {
+    count += 1;
+    count += countDescendants(child);
+  }
+  return count;
 }

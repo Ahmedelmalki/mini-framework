@@ -17,6 +17,8 @@ function walk(node, patches, index) {
 }
 
 function applyPatches(node, patches) {
+  // console.log("patches",patches);
+
   patches.forEach(patch => {
     switch (patch.type) {
       case "REMOVE":
@@ -31,6 +33,7 @@ function applyPatches(node, patches) {
         node.parentNode.replaceChild(replacedNode, node);
         break;
       case "TEXT":
+
         if (node.nodeType === Node.TEXT_NODE) {
           node.nodeValue = patch.newNode.props.nodeValue;
         } else {
@@ -41,30 +44,30 @@ function applyPatches(node, patches) {
         for (const key in patch.propPatches) {
           if (key === "children") continue;
           const value = patch.propPatches[key];
-          if (value === null) {
-            if (key.startsWith("on")) {
-              const eventType = key.slice(2).toLowerCase();
-              if (node[key]) node.removeEventListener(eventType, node[key]);
-              node[key] = null;
-            } else if (key === "class" || key === "className") {
-              node.removeAttribute("class");
-            } else {
-              node.removeAttribute(key);
+          if (key.startsWith("on")) {
+            const eventType = key.slice(2).toLowerCase();
+            // const handlerProp = "__" + eventType + "Handler";
+            // Remove old handler if it exists
+            if (node[eventType]) {
+              node.removeEventListener(eventType, node[eventType]);
             }
-          } else {
-            if (key.startsWith("on")) {
-              const eventType = key.slice(2).toLowerCase();
-              if (node[key]) node.removeEventListener(eventType, node[key]);
+            if (value) {
               node.addEventListener(eventType, value);
-              node[key] = value;
-            } else if (key === "class" || key === "className") {
-              node.className = value;
+              node[eventType] = value;
             } else {
-              node.setAttribute(key, value);
+              node[eventType] = null;
             }
+          }
+          else if (value === null) {
+            node.removeAttribute(key);
+          } else if (key === "class") {
+            node.className = value;
+          } else {
+            node.setAttribute(key, value);
           }
         }
         break;
+
     }
   });
 }
