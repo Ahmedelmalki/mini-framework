@@ -31,23 +31,36 @@ function applyPatches(node, patches) {
         node.parentNode.replaceChild(replacedNode, node);
         break;
       case "TEXT":
-        node.nodeValue = patch.newNode.props.nodeValue;
+        if (node.nodeType === Node.TEXT_NODE) {
+          node.nodeValue = patch.newNode.props.nodeValue;
+        } else {
+          node.textContent = patch.newNode.props.nodeValue;
+        }
         break;
       case "PROPS":
         for (const key in patch.propPatches) {
-          if (patch.propPatches[key] === null) {
-            if (key.startsWith("on") && typeof node[key] === "function") {
+          if (key === "children") continue;
+          const value = patch.propPatches[key];
+          if (value === null) {
+            if (key.startsWith("on")) {
               const eventType = key.slice(2).toLowerCase();
-              node.removeEventListener(eventType, node[key]);
+              if (node[key]) node.removeEventListener(eventType, node[key]);
+              node[key] = null;
+            } else if (key === "class" || key === "className") {
+              node.removeAttribute("class");
             } else {
               node.removeAttribute(key);
             }
           } else {
-            if (key.startsWith("on") && typeof patch.propPatches[key] === "function") {
+            if (key.startsWith("on")) {
               const eventType = key.slice(2).toLowerCase();
-              node.addEventListener(eventType, patch.propPatches[key]);
+              if (node[key]) node.removeEventListener(eventType, node[key]);
+              node.addEventListener(eventType, value);
+              node[key] = value;
+            } else if (key === "class" || key === "className") {
+              node.className = value;
             } else {
-              node[key] = patch.propPatches[key];
+              node.setAttribute(key, value);
             }
           }
         }
@@ -63,13 +76,16 @@ function createElement(vNode) {
 
   const element = document.createElement(vNode.type);
   for (const prop in vNode.props) {
-    if (prop !== "children") {
-      if (prop.startsWith("on") && typeof vNode.props[prop] === "function") {
-        const eventType = prop.slice(2).toLowerCase();
-        element.addEventListener(eventType, vNode.props[prop]);
-      } else {
-        element[prop] = vNode.props[prop];
-      }
+    if (prop === "children") continue;
+    const value = vNode.props[prop];
+    if (prop.startsWith("on") && typeof value === "function") {
+      const eventType = prop.slice(2).toLowerCase();
+      element.addEventListener(eventType, value);
+      element[prop] = value;
+    } else if (prop === "class" || prop === "className") {
+      element.className = value;
+    } else {
+      element.setAttribute(prop, value);
     }
   }
 

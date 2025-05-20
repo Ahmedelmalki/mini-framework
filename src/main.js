@@ -8,22 +8,49 @@ let currentState = [];
 let stateIndex = 0;
 let oldVDOM = null;
 
-function rerender() {
-  stateIndex = 0;
-  const newVDOM = App();
-  const patches = diff(oldVDOM, newVDOM);
-  patch(container.firstChild, patches);
-  oldVDOM = newVDOM;
-}
 
+function rerender() {
+  console.log('=== Rerender Start ===');
+  console.log('Before state reset:', currentState);
+  // Save current state values
+  const prevState = [...currentState];
+  
+  // Reset state index before creating new VDOM
+  stateIndex = 0;
+  
+  // Create new VDOM with current state
+  const newVDOM = App();
+   console.log('New VDOM:', newVDOM);
+
+  // Generate and apply patches
+  const patches = diff(oldVDOM, newVDOM);
+  
+  // Only patch if we have a firstChild
+  if (container.firstChild) {
+    patch(container.firstChild, patches);
+  } else {
+    // Initial render
+    ourFrame.render(newVDOM, container);
+  }
+  
+  // Update old VDOM reference
+  oldVDOM = newVDOM;
+  
+  // Restore state values
+  currentState = prevState;
+  console.log('After rerender state:', currentState);
+  console.log('=== Rerender End ===\n');
+}
 function useState(initialValue) {
   const localIndex = stateIndex;
   currentState[localIndex] = currentState[localIndex] !== undefined ? currentState[localIndex] : initialValue;
-  
+
   function setState(newValue) {
-    currentState[localIndex] = newValue;
-    console.log("test");
-    rerender();
+    console.log(`setState called: current=${currentState[localIndex]}, new=${newValue}`);
+    if (currentState[localIndex] !== newValue) {
+      currentState[localIndex] = newValue;
+      rerender();
+    }
   }
 
   stateIndex++;
@@ -60,9 +87,6 @@ function render(element, container) {
     element.type == "TEXT_ELEMENT"
       ? document.createTextNode("")
       : document.createElement(element.type)
-  element.props.children.forEach(child =>
-    render(child, dom)
-  )
   const isProperty = key => key !== "children"
   Object.keys(element.props)
     .filter(isProperty)
@@ -70,13 +94,15 @@ function render(element, container) {
       if (name.startsWith("on") && typeof element.props[name] === "function") {
         // Attach event listener
         const eventType = name.slice(2).toLowerCase();
-        
         dom.addEventListener(eventType, element.props[name]);
       } else {
         dom[name] = element.props[name];
       }
     })
 
+  element.props.children.forEach(child =>
+    render(child, dom)
+  )
   container.appendChild(dom)
 }
 
@@ -85,17 +111,9 @@ const ourFrame = {
   render
 }
 
-// function Header() {
-//   return ourFrame.createElement(
-//     "header",
-//     { class: "header" },
-//     ourFrame.createElement("h1", { class: "header" }, "todos")
-//   );
-// }
 
 function App() {
   const [count, setCount] = useState(0);
-// console.log(count);
 
   return ourFrame.createElement(
     "div",
@@ -103,7 +121,11 @@ function App() {
     ourFrame.createElement("h1", null, "Count: " + count),
     ourFrame.createElement(
       "button",
-      { onclick: () => setCount(count + 1) },
+      {
+        onclick: () => {
+          setCount(count + 1); console.log("Button clicked");
+        }
+      },
       "Increment"
     )
   );

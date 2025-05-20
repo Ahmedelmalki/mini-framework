@@ -23,7 +23,6 @@ function walk(oldNode, newNode, patches, index) {
   } else {
     // Check for property changes
     const propPatches = diffProps(oldNode.props, newNode.props);
-    console.log(oldNode.props, newNode.props);
     
     if (Object.keys(propPatches).length > 0) {
       patch.push({ type: "PROPS", propPatches });
@@ -40,10 +39,13 @@ function walk(oldNode, newNode, patches, index) {
 
 function diffProps(oldProps, newProps) {
   const patches = {};
-
   // Check for changed or new props
   for (const key in newProps) {
-    if (newProps[key] !== oldProps[key]) {
+    if (key === 'children') continue;
+    // Special handling for event handlers
+    if (key.startsWith('on')) {
+      patches[key] = newProps[key];
+    } else if (newProps[key] !== oldProps[key]) {
       patches[key] = newProps[key];
     }
   }
