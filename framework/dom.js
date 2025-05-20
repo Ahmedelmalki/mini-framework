@@ -11,15 +11,22 @@ export function diff(oldTree, newTree) {
     }
 
     if (!newTree) {
-      return dom.parentNode.removeChild(dom);
+      if (dom instanceof Node && dom.parentNode) {
+        return dom.parentNode.removeChild(dom);
+      } else {
+        console.warn("don't remove it if is note node or doesn't exist blan:", dom);
+        return;
+      }
     }
+
 
     if (oldTree.type !== newTree.type) {
       return dom.parentNode.replaceChild(createElement(newTree), dom);
     }
 
     if (newTree.type === "TEXT_ELEMENT") {
-      if (oldTree.props.nodeValue !== newTree.props.nodeValue) {
+      if (dom.nodeType === Node.TEXT_NODE &&
+        oldTree.props.nodeValue !== newTree.props.nodeValue) {
         dom.nodeValue = newTree.props.nodeValue;
       }
       return;
@@ -32,6 +39,8 @@ export function diff(oldTree, newTree) {
     const newChildren = newTree.props.children || [];
 
     const maxLnt = Math.max(oldChildren.length, newChildren.length);
+    const domChildren = Array.from(dom.childNodes); // avoid live list issues
+
     for (let i = 0; i < maxLnt; i++) {
       if (i < oldChildren.length && i < newChildren.length) {
         if (dom.childNodes[i]) {
@@ -42,7 +51,12 @@ export function diff(oldTree, newTree) {
       } else if (i < newChildren.length) {
         dom.appendChild(createElement(newChildren[i])); // add new child
       } else if (i < oldChildren.length) {
-        dom.removeChild(dom.childNodes[i]); // remove old child
+        const childNode = dom.childNodes[i];
+        if (childNode && childNode instanceof Node) {
+          dom.removeChild(childNode); // ila kan valid omachi undefined
+        } else {
+          console.warn("Tried to remove non-existent or invalid child node at index", i, childNode);
+        }
       }
     }
   };

@@ -4,9 +4,10 @@ import { route } from "../framework/route.js";
 
 export default function App() {
   state.resetCursor(); // Reset before each re-render
-
   const [todos, setTodos] = state.useState([]);
+
   const [inputValue, setInput] = state.useState("");
+
   const itemsLeft = todos.filter((todo) => !todo.completed).length;
 
   const addTodo = () => {
