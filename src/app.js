@@ -19,11 +19,8 @@ export default function App() {
     setTodos(todos.filter((todo) => !todo.completed));
   };
 
-  // link each button to its rout
   const location = route.useLocation();
   const navigate = route.useNavigate();
-//  debugger;
-  console.log('location ==>',location);
 
   const currentPath = location;
   let filter = "all";
@@ -68,17 +65,32 @@ export default function App() {
       ourFrame.createElement(
         "ul",
         null,
-        ...filterTodos.map((todo) =>
+        ...filterTodos.map((todo, index) =>
           ourFrame.createElement(
             "li",
             null,
-            ourFrame.createElement("span", null, todo.text)
+            ourFrame.createElement(
+              "label",
+              null,
+              ourFrame.createElement("input", {
+                type: "checkbox",
+                checked: todo.completed,
+                onChange: () => {
+                  // Toggle completion status
+                  const updated = [...todos];
+                  updated[index].completed = !updated[index].completed;
+                  setTodos(updated);
+                },
+              }),
+              " ",
+              todo.text
+            )
           )
         )
       )
     ), // end todos section
     ourFrame.createElement(
-      "section", // can i separate this block of code ??
+      "section",
       { className: "btns-section" },
       ourFrame.createElement("span", null, `${itemsLeft} items left`),
       ourFrame.createElement(
