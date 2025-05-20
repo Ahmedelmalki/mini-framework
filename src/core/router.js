@@ -11,10 +11,10 @@ export function navigate(path) {
 
 function renderRoute(path) {
   const view = routes[path];
-  if (view) {
+  if (typeof view === 'function') {
     const root = document.getElementById('app');
     root.innerHTML = '';
-    root.appendChild(view());
+    root.appendChild(view({ path }));
   }
 }
 

@@ -12,7 +12,7 @@ function test() {
 test();
 
 // test 2
-import { mfCreateElement } from "../logic/dom/creatElement.js";
+import { createElement } from "./core/dom.js";
 
 const vdom = {
   tag: 'div',
@@ -25,7 +25,7 @@ const vdom = {
 
 function test2(){
     const test = document.getElementById("test");
-    const p2 = mfCreateElement(vdom)
+    const p2 = createElement(vdom)
     console.log(p2); 
     test.appendChild(p2)
 }

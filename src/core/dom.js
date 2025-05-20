@@ -1,4 +1,4 @@
-export function mfCreateElement(vnode) {
+export function createElement(vnode) {
   const el = document.createElement(vnode.tag);
 
   // Set attributes
@@ -20,7 +20,7 @@ export function mfCreateElement(vnode) {
     (vnode.children || []).forEach(child => {
       const childEl = typeof child === 'string'
         ? document.createTextNode(child)
-        : mfCreateElement(child);
+        : createElement(child);
       el.appendChild(childEl);
     });
   }

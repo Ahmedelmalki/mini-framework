@@ -1,18 +1,14 @@
-const Event = {};
+const Events = {};
 
-// register event comming from user
 export function registerEvent(eventName, callback) {
-  Event[eventName] = callback;
+  if (!Events[eventName]) {
+    Events[eventName] = [];
+  }
+  Events[eventName].push(callback);
 }
 
-// apply event if it is the one 
 export function triggerEvent(eventName, data) {
-  if (Event[eventName]) {
-    Event[eventName](data);
+  if (Events[eventName]) {
+    Events[eventName].forEach(callback => callback(data));
   }
 }
-
-// registerEvent('onSave', (data) => {
-//   console.log('get saved :', data);
-// });
-

@@ -14,9 +14,11 @@ mini-framework/
 │   │   ├── state.js       // Global state management
 │   │   ├── router.js      // Routing system
 │   │   └── events.js      // Event handling system
+|   |   └── render.js 
 │   │
 │   ├── framework.js  
-│   └── index.js         
+│   └── index.js
+│   └── test.js          
 │
 ├── /public
 │   └── index.html
