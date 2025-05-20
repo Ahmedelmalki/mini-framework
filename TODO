@@ -1,0 +1,31 @@
+Your framework needs to implement:
+    DOM abstraction
+    Routing system
+    State management
+    Event handling
+
+
+
+mini-framework/
+│
+├── /src
+│   ├── core/
+│   │   ├── dom.js         // DOM abstraction and rendering
+│   │   ├── state.js       // Global state management
+│   │   ├── router.js      // Routing system
+│   │   └── events.js      // Event handling system
+│   │
+│   ├── framework.js  
+│   └── index.js         
+│
+├── /public
+│   └── index.html
+│
+├── /docs
+│   └── README.md    
+│
+├── /todoMVC   
+│   ├── todo.js
+│   └── todo.css
+│
+└── package.json
