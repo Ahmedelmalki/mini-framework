@@ -11,3 +11,8 @@ export function triggerEvent(eventName, data) {
     Event[eventName](data);
   }
 }
+
+// registerEvent('onSave', (data) => {
+//   console.log('get saved :', data);
+// });
+
