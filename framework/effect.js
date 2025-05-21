@@ -1,12 +1,14 @@
-/***************** side effect logic ****************/
 let effects = [];
 let currentIndex = 0;
+let unmountCallbacks = []; // Zedna array dyal unmount callbacks
 
 function useEffect(callback, deps) {
   const previous = effects[currentIndex];
   let hasChanged;
   
   if (!previous) {
+    hasChanged = true;
+  } else if (!deps || !previous.deps || deps.length !== previous.deps.length) {
     hasChanged = true;
   } else {
     hasChanged = false;
@@ -24,6 +26,11 @@ function useEffect(callback, deps) {
     }
     const cleanup = callback();
     effects[currentIndex] = { deps, cleanup };
+    
+    // Register cleanup function to be called on unmount
+    if (typeof cleanup === "function") {
+      unmountCallbacks.push(cleanup);
+    }
   }
 
   currentIndex++;
@@ -34,7 +41,28 @@ function resetEffects() {
   currentIndex = 0;
 }
 
+// Fix: Zedna function jdida li kan3ayto liha f destroy component
+function cleanupEffects() {
+  // Run all cleanup functions
+  effects.forEach(effect => {
+    if (effect && typeof effect.cleanup === "function") {
+      effect.cleanup();
+    }
+  });
+  
+  unmountCallbacks.forEach(cleanup => {
+    if (typeof cleanup === "function") {
+      cleanup();
+    }
+  });
+  
+  effects = [];
+  unmountCallbacks = [];
+  currentIndex = 0;
+}
+
 export const effect = {
   useEffect,
   resetEffects,
+  cleanupEffects,
 };
