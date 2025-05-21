@@ -46,7 +46,7 @@ export function diff(oldTree, newTree) {
     const domChildrenArray = Array.from(dom.childNodes);
     const maxLength = Math.max(oldChildren.length, newChildren.length);
 
-    // Fix: Protection dyal indices o tracking lli tm7aw bash mawlliouch n9isso marratyn
+    // Fix: Protection dyal indices o tracking lli tm7aw bash mawlliouch n9isso joj mrat
     const removedIndices = new Set();
 
     for (let i = 0; i < maxLength; i++) {
