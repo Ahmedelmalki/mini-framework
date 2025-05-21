@@ -57,7 +57,7 @@ export default function App() {
             addTodo();
           },
         },
-        "add"
+        "add + "
       )
     ), // end input section
     ourFrame.createElement(
@@ -93,27 +93,30 @@ export default function App() {
     ourFrame.createElement(
       "section",
       { className: "btns-section" },
-      ourFrame.createElement("span", null, `${itemsLeft} items left`),
+      ourFrame.createElement("span", null, `${itemsLeft} items left\t`),
       ourFrame.createElement(
         "button",
         {
+          className: filter === "all" ? "active-filter" : "",
           onClick: () => navigate("/"),
         },
-        "all"
+        "All"
       ),
       ourFrame.createElement(
         "button",
         {
+           className: filter === "active" ? "active-filter" : "",
           onClick: () => navigate("/active"),
         },
-        "active"
+        "Active"
       ),
       ourFrame.createElement(
         "button",
         {
+          className: filter === "completed" ? "active-filter" : "",
           onClick: () => navigate("/completed"),
         },
-        "completed"
+        "Completed"
       ),
       ourFrame.createElement(
         "button",
@@ -122,7 +125,7 @@ export default function App() {
             clearCompleted();
           },
         },
-        "clear completed"
+        "Clear completed"
       )
     ) // end buttons section
   ); // end App
