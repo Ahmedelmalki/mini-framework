@@ -37,7 +37,7 @@ export default function App() {
   return ourFrame.createElement(
     "div",
     null,
-    ourFrame.createElement("h1", null, "Todos"),
+    ourFrame.createElement("h1", null, ""),
     ourFrame.createElement(
       "section",
       { className: "enterTodos" },
