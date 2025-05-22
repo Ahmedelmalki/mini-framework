@@ -23,4 +23,6 @@ const vdom = {
 
 const main = createDom(vdom);
 
-render(main, document.querySelector("#app"));
+const dom = document.querySelector("#app");
+
+render(main, dom);

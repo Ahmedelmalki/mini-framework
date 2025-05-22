@@ -8,34 +8,6 @@ const addNode = (tagName, attrs = {}, children = []) => {
   };
 };
 
-
-const createEl = (tagName, attrs = {}, ...children) => {
-    const el = document.createElement(tagName);
-
-    if(attrs) {
-        for (const [key, value] of Object.entries(attrs)) {
-            if (key.startsWith("on") && typeof value == "function") {
-                el[key] = null
-                el[key] = value
-            } else {
-                el.setAttribute(key, value)
-            }
-        }
-    }
-
-    if (children) {
-        children.forEach((child) => {
-            if (typeof child === "string" || typeof child == "number") {
-                el.appendChild(document.createTextNode(child));
-            } else {
-                const childDom = createEl(child.name,child.attrs,...child.children)
-                el.appendChild(childDom);
-            }
-        });
-    }
-    return el;
-}
-
 const createDom = (vdom) => {
     const el = document.createElement(vdom.name);
     if(vdom.attrs) {
@@ -53,7 +25,7 @@ const createDom = (vdom) => {
             if (typeof child == "string" || typeof child == "number") {
                 el.appendChild(document.createTextNode(child));
             } else {
-                const childDom = createEl(child.name,child.attrs,...child.children)
+                const childDom = createDom(child)
                 el.appendChild(childDom);
             }
         });
@@ -62,4 +34,4 @@ const createDom = (vdom) => {
 }
 
 
-export { render, addNode, createEl, createDom };
+export { render, addNode, createDom };
