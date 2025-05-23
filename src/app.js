@@ -36,11 +36,11 @@ export default function App() {
 
   return ourFrame.createElement(
     "div",
-    null,
-    ourFrame.createElement("h1", null, ""),
+    {class: "todos-section"},
+    ourFrame.createElement("h1", {class: "title"}, "todos"),
     ourFrame.createElement(
       "section",
-      { className: "enterTodos" },
+      { class: "enterTodos" },
       ourFrame.createElement("input", {
         type: "text",
         value: inputValue,
@@ -52,17 +52,17 @@ export default function App() {
       ourFrame.createElement(
         "button",
         {
-          className: "add-btn",
+          class: "add-btn",
           onClick: () => {
             addTodo();
           },
         },
-        "add + "
+        "create"
       )
     ), // end input section
     ourFrame.createElement(
       "section",
-      { className: "todos" },
+      { class: "todos" },
       ourFrame.createElement(
         "ul",
         null,
@@ -84,7 +84,8 @@ export default function App() {
                 },
               }),
               " ",
-              todo.text
+              ourFrame.createElement("span",{class: todo.completed ? "complated": ""},todo.text)
+              
             )
           )
         )
@@ -92,12 +93,12 @@ export default function App() {
     ), // end todos section
     ourFrame.createElement(
       "section",
-      { className: "btns-section" },
+      { class: "btns-section" },
       ourFrame.createElement("span", null, `${itemsLeft} items left\t`),
       ourFrame.createElement(
         "button",
         {
-          className: filter === "all" ? "active-filter" : "",
+          class: filter === "all" ? "active-filter" : "",
           onClick: () => navigate("/"),
         },
         "All"
@@ -105,7 +106,7 @@ export default function App() {
       ourFrame.createElement(
         "button",
         {
-           className: filter === "active" ? "active-filter" : "",
+           class: filter === "active" ? "active-filter" : "",
           onClick: () => navigate("/active"),
         },
         "Active"
@@ -113,7 +114,7 @@ export default function App() {
       ourFrame.createElement(
         "button",
         {
-          className: filter === "completed" ? "active-filter" : "",
+          class: filter === "completed" ? "active-filter" : "",
           onClick: () => navigate("/completed"),
         },
         "Completed"
