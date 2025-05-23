@@ -55,10 +55,6 @@ export default function App() {
   ); // end App
 }
 
-// function Header(){
-//   return ourFrame.createElement("header", null, "todos")
-// }
-
 function EnterTodos({inputValue, setInput, onAdd}){
    return ourFrame.createElement(
     "section",
