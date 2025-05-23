@@ -1,36 +1,43 @@
+import { addNode, createDom, initialRender } from "../framework/dom.js"
+import { useState } from "../framework/state.js"
 
-import { ourFrame } from "../framework/dom.js";
-import App from "./app.js";
-import { injectRerender , state} from "../framework/state.js";
-import { effect } from "../framework/effect.js";
-
-const container = document.getElementById("root"); // root node 
-let currentApp = null; // Keep track of the current app state/virtual DOM
-
-function initialRender() { // Initial render
-  // nmarkiw bli renderinga
-  state.startRendering();
-  currentApp = App();
-  ourFrame.render(currentApp, container);
-  state.endRendering();
+const [task, setTask] = useState("")
+const handleSubmit = (e) => {
+    e.preventDefault()
+    const formdata = new FormData(e.target)
+    setTask(formdata.get('task')) 
+    console.log(task);
 }
 
-injectRerender(rerender); // difing this shit in the call stack
-
-function rerender() { 
-   state.startRendering();
-  effect.resetEffects();
-  state.resetCursor();
-
-  const newApp = App();
-  ourFrame.patch(container, currentApp, newApp);
-  currentApp = newApp;
-  state.endRendering();
+const vdom = {
+    type: "div",
+    props: {class: "content"},
+    children: [
+        addNode("h1",{class:"title"},["Todos"]),
+        addNode("div",{class:"todo-card"},[
+            addNode("div",{class:"todo-list"},[`task is: ${task}`]),
+            addNode("form",{onsubmit: ()=> handleSubmit},[
+                addNode("input",{
+                    placeholder:"add todo...",
+                    class: "todo-input",
+                    name: "task",
+                    type: "text",
+                },[]),
+                addNode("button",{
+                    class: "add-btn",
+                    type: "submit",
+                },["ADD"])
+            ]),
+        ])
+    ]
 }
 
-// Fix a3lal : Add cleanup on page unload
-window.addEventListener("unload", () => {
-  effect.cleanupEffects();
-});
+const dom = createDom(vdom)
+export const rerender = () => {
+    document.querySelector("#main").textContent = ""
+    initialRender(createDom(vdom),document.querySelector("#main"))
+}
 
-initialRender(); // Initialize the app
+const main = document.querySelector('#main')
+
+initialRender(dom, main)
