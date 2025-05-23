@@ -7,7 +7,6 @@ export default function App() {
   
   const [todos, setTodos] = state.useState([]);
   const [inputValue, setInput] = state.useState("");
-
   const itemsLeft = todos.filter((todo) => !todo.completed).length;
 
   const addTodo = () => {
@@ -32,6 +31,13 @@ export default function App() {
     if (filter === "completed") return todo.completed;
     return true; // all
   });
+
+  const toggleTodo = idx => {
+    const updated = todos.slice();
+    updated[idx].completed = !updated[idx].completed;
+    setTodos(updated);
+  };
+
 
   const toggleTodo = idx => {
     const updated = todos.slice();

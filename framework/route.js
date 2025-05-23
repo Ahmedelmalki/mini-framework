@@ -4,7 +4,6 @@ import { effect } from "./effect.js";
 /***************** routing logic ****************/
 function useLocation() {
   const [loc, setLoc] = state.useState(window.location.pathname);
-  // console.log('window.location ==>', window.location);
 
   effect.useEffect(() => {
     function update() {
