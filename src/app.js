@@ -38,14 +38,6 @@ export default function App() {
     setTodos(updated);
   };
 
-
-  const toggleTodo = idx => {
-    const updated = todos.slice();
-    updated[idx].completed = !updated[idx].completed;
-    setTodos(updated);
-  };
-
-
   return ourFrame.createElement(
     "div",
     null,
