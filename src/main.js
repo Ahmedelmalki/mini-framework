@@ -15,7 +15,7 @@ function initialRender() { // Initial render
   state.endRendering();
 }
 
-injectRerender(rerender); // difing this shit in the call stack
+injectRerender(rerender); 
 
 function rerender() { 
    state.startRendering();

@@ -2,22 +2,26 @@ let effects = [];
 let currentIndex = 0;
 let unmountCallbacks = []; // Zedna array dyal unmount callbacks
 
+function haveDepsChanged(prevDeps, nextDeps){
+    if (!prevDeps || !nextDeps || prevDeps.length !== nextDeps.length) {
+    return true;
+  }
+  for (let i = 0; i < nextDeps.length; i++) {
+    if (nextDeps[i] !== prevDeps[i]) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function useEffect(callback, deps) {
   const previous = effects[currentIndex];
   let hasChanged;
   
   if (!previous) {
     hasChanged = true;
-  } else if (!deps || !previous.deps || deps.length !== previous.deps.length) {
-    hasChanged = true;
   } else {
-    hasChanged = false;
-    for (let i = 0; i < deps.length; i++) {
-      if (deps[i] !== previous.deps[i]) {
-        hasChanged = true;
-        break;
-      }
-    }
+    hasChanged = haveDepsChanged(previous.deps, deps)
   }
 
   if (hasChanged) {

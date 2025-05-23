@@ -13,12 +13,8 @@ function useState(initialValue) {
 
   const currentValue = states[currentIndex];
 
-  function setState(newValue) {
-    console.log("newValue ==>", newValue);
-    
-    const valueToSet = typeof newValue === "function" 
-      ? newValue(states[currentIndex]) 
-      : newValue;
+  function setState(newValue) {    
+    const valueToSet = typeof newValue === "function" ? newValue(states[currentIndex]) : newValue;
     
     const hasChanged = states[currentIndex] !== valueToSet;
     
