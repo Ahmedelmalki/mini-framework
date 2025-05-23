@@ -41,91 +41,98 @@ export default function App() {
 
   return ourFrame.createElement(
     "div",
-    null,
-     //Header(),
-    EnterTodos({inputValue, setInput, onAdd: addTodo}),
-    TodoList({ todos: filterTodos, onToggle: toggleTodo }),
-    Controls({
-      itemsLeft,
-      currentFilter: filter,
-      onNavigate: navigate,
-      onClear: clearCompleted,
-    }),
-  ); 
-}
-
-// function Header(){
-//   return ourFrame.createElement("header", null, "todos")
-// }
-
-function EnterTodos({inputValue, setInput, onAdd}){
-   return ourFrame.createElement(
-    "section",
-    { className: "enterTodos" },
-    ourFrame.createElement("input", {
-      type: "text",
-      value: inputValue,
-      placeholder: "enter a todo",
-      onInput: e => setInput(e.target.value),
-    }),
+    {class: "todos-section"},
+    ourFrame.createElement("h1", {class: "title"}, "todos"),
     ourFrame.createElement(
-      "button",
-      { className: "add-btn", onClick: onAdd },
-      "add +"
-    )
-  );
-}
-
-function TodoList({todos, onToggle}){
-  return ourFrame.createElement(
-    "section",
-    { className: "todos" },
+      "section",
+      { class: "enterTodos" },
+      ourFrame.createElement("input", {
+        type: "text",
+        value: inputValue,
+        placeholder: "enter a todo",
+        onInput: (e) => {
+          setInput(e.target.value);
+        },
+      }),
+      ourFrame.createElement(
+        "button",
+        {
+          class: "add-btn",
+          onClick: () => {
+            addTodo();
+          },
+        },
+        "create"
+      )
+    ), // end input section
     ourFrame.createElement(
-      "ul",
-      null,
-      ...todos.map((todo, idx) =>
-        ourFrame.createElement(
-          "li",
-          null,
+      "section",
+      { class: "todos" },
+      ourFrame.createElement(
+        "ul",
+        null,
+        ...filterTodos.map((todo, index) =>
           ourFrame.createElement(
-            "label",
+            "li",
             null,
-            ourFrame.createElement("input", {
-              type: "checkbox",
-              checked: todo.completed,
-              onChange: () => onToggle(idx),
-            }),
-            " ",
-            todo.text
+            ourFrame.createElement(
+              "label",
+              null,
+              ourFrame.createElement("input", {
+                type: "checkbox",
+                checked: todo.completed,
+                onChange: () => {
+                  // Toggle completion status
+                  const updated = [...todos];
+                  updated[index].completed = !updated[index].completed;
+                  setTodos(updated);
+                },
+              }),
+              " ",
+              ourFrame.createElement("span",{class: todo.completed ? "complated": ""},todo.text)
+              
+            )
           )
         )
       )
-    )
-  );
-}
-
-function Controls({itemsLeft, currentFilter, onNavigate, onClear}){
-  const btn = (label, path) =>
+    ), // end todos section
     ourFrame.createElement(
-      "button",
-      {
-        className: currentFilter === path ? "active-filter" : "",
-        onClick: () => onNavigate(path),
-      },
-      label
-    );
-
-  return ourFrame.createElement(
-    "section",
-    { className: "btns-section" },
-    ourFrame.createElement("span", null, `${itemsLeft} items left\t`),
-    btn("All", "/"),
-    btn("Active", "/active"),
-    btn("Completed", "/completed"),
-    ourFrame.createElement(
-      "button",
-      { onClick: onClear },
-      "Clear completed"
-    )
-  );
+      "section",
+      { class: "btns-section" },
+      ourFrame.createElement("span", null, `${itemsLeft} items left\t`),
+      ourFrame.createElement(
+        "button",
+        {
+          class: filter === "all" ? "active-filter" : "",
+          onClick: () => navigate("/"),
+        },
+        "All"
+      ),
+      ourFrame.createElement(
+        "button",
+        {
+           class: filter === "active" ? "active-filter" : "",
+          onClick: () => navigate("/active"),
+        },
+        "Active"
+      ),
+      ourFrame.createElement(
+        "button",
+        {
+          class: filter === "completed" ? "active-filter" : "",
+          onClick: () => navigate("/completed"),
+        },
+        "Completed"
+      ),
+      ourFrame.createElement(
+        "button",
+        {
+          onClick: () => {
+            clearCompleted();
+          },
+        },
+        "Clear completed"
+      )
+    ) // end buttons section
+  ); // end App
 }

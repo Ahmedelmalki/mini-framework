@@ -6,14 +6,14 @@
 }
 
 html, body {
-  height: 100%;
+  min-height: 100%;
   font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  background: #f5f5f5;
+  background: #01052b;
   color: #4d4d4d;
-  line-height: 1.4em;
+  /* line-height: 1.4em; */
 }
 
-/* Center the body */
+/* Center the body
 html {
   display: table;
   margin: auto;
@@ -22,35 +22,28 @@ html {
 body {
   display: table-cell;
   vertical-align: middle;
-}
+} */
 
 /* Header (outside the app) */
-header {
-  color: rgb(177, 59, 59);
+
+.title {
+  font-size: 60px;
+  font-weight: 600;
+  color: #b13b3b;
   text-align: center;
-  margin-bottom: 1rem;
-  font-size: 100px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
 }
 
-header h1 {
-  height: 5vh;
-  font-size: 100px;
-  font-weight: 100;
-  color: rgb(177, 59, 59);
-  text-rendering: optimizeLegibility;
-}
-
-/* App container */
-#root {
-  background: white;
-  margin: auto;
-  padding: 2rem;
-  border-radius: 2px;
-  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2),
-              0 25px 50px 0 rgba(0,0,0,0.1);
-  height: 50vh;
-  min-width: 600px;
-  max-width: 850px;
+.todos-section {
+  width: 600px;
+  max-width: 90%;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #12225a88;
+  backdrop-filter: blur(15px);
+  border-radius: 6px;
+  box-shadow: 0 0 4px #000211, 0 0 4px #000211;
 }
 
 /* Input section */
@@ -70,15 +63,17 @@ header h1 {
 
 .add-btn {
   padding: 0.7rem 1.2rem;
-  font-size: 1rem;
-  background-color: #e6e6e6;
-  border: 1px solid #ccc;
+  font-size: 16px;
+  font-weight: 600;
+  background-color: #095a06;
+  color: #ffffff;
   border-radius: 4px;
   cursor: pointer;
+  text-transform: uppercase;
 }
 
 .add-btn:hover {
-  background-color: #d6d6d6;
+  background-color: #247221;
 }
 
 /* Todos list */
@@ -88,16 +83,27 @@ header h1 {
 }
 
 .todos li {
+  width: 100%;
   border-bottom: 1px solid #ededed;
   padding: 1rem 0.5rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  color: #ccc;
+  font-size: 16px;
+  font-weight: 400;
+  word-break: break-all;
 }
 
 .todos input[type="checkbox"] {
   width: 1rem;
   height: 1rem;
+}
+
+.complated {
+  color: #4d4d4d !important;
+  text-decoration: line-through !important;
+
 }
 
 /* Footer buttons */
