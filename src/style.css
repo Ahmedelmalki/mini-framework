@@ -100,7 +100,7 @@ body {
   height: 1rem;
 }
 
-.complated {
+.completed {
   color: #4d4d4d !important;
   text-decoration: line-through !important;
 
@@ -136,4 +136,23 @@ button {
 button:hover {
   border-color: black;
   background-color: #1dd816;
+}
+
+.not-found-container {
+  text-align: center;
+  padding: 2rem;
+}
+
+.home-btn {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: #646cff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.home-btn:hover {
+  background: #535bf2;
 }
