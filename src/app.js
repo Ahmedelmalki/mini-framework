@@ -1,13 +1,20 @@
+
 import { ourFrame } from "../framework/dom.js";
 import { state } from "../framework/state.js";
-import { route } from "../framework/route.js";
+import router from './main.js';
 
 export default function App() {
   state.resetCursor(); // Reset before each re-render
-    
+
   const [todos, setTodos] = state.useState([]);
   const [inputValue, setInput] = state.useState("");
   const itemsLeft = todos.filter((todo) => !todo.completed).length;
+
+  // Get current path from window.location
+  const currentPath = window.location.pathname;
+  let filter = "all";
+  if (currentPath === "/active") filter = "active";
+  else if (currentPath === "/completed") filter = "completed";
 
   const addTodo = () => {
     if (!inputValue.trim()) return;
@@ -18,13 +25,6 @@ export default function App() {
   const clearCompleted = () => {
     setTodos(todos.filter((todo) => !todo.completed));
   };
-
-  const location = route.useLocation();
-  const navigate = route.useNavigate();
-  const currentPath = location;
-  let filter = "all";
-  if (currentPath === "/active") filter = "active";
-  else if (currentPath === "/completed") filter = "completed";
 
   const filterTodos = todos.filter((todo) => {
     if (filter === "active") return !todo.completed;
@@ -38,33 +38,31 @@ export default function App() {
     setTodos(updated);
   };
 
-
   return ourFrame.createElement(
     "div",
-    {class: "todos-section"},
-    ourFrame.createElement("h1", {class: "title"}, "todos"),
+    { class: "todos-section" },
+    ourFrame.createElement("h1", { class: "title" }, "todos"),
     ourFrame.createElement(
-      "section",
-      { class: "enterTodos" },
+      "form",
+      {
+        class: "enterTodos", onSubmit: (e) => {
+          e.preventDefault(); // Prevent form submission
+          addTodo();
+        }
+      },
+
       ourFrame.createElement("input", {
         type: "text",
         value: inputValue,
         placeholder: "enter a todo",
-        onInput: (e) => {
-          setInput(e.target.value);
-        },
+        onInput: (e) => setInput(e.target.value),
       }),
       ourFrame.createElement(
         "button",
-        {
-          class: "add-btn",
-          onClick: () => {
-            addTodo();
-          },
-        },
+        { class: "add-btn", type: "submit" },
         "create"
       )
-    ), // end input section
+    ),
     ourFrame.createElement(
       "section",
       { class: "todos" },
@@ -81,21 +79,18 @@ export default function App() {
               ourFrame.createElement("input", {
                 type: "checkbox",
                 checked: todo.completed,
-                onChange: () => {
-                  // Toggle completion status
-                  const updated = [...todos];
-                  updated[index].completed = !updated[index].completed;
-                  setTodos(updated);
-                },
+                onChange: () => toggleTodo(index),
               }),
               " ",
-              ourFrame.createElement("span",{class: todo.completed ? "complated": ""},todo.text)
-              
+              ourFrame.createElement("span",
+                { class: todo.completed ? "completed" : "" },
+                todo.text
+              )
             )
           )
         )
       )
-    ), // end todos section
+    ),
     ourFrame.createElement(
       "section",
       { class: "btns-section" },
@@ -104,15 +99,15 @@ export default function App() {
         "button",
         {
           class: filter === "all" ? "active-filter" : "",
-          onClick: () => navigate("/"),
+          onClick: () => router.navigate("/"),
         },
         "All"
       ),
       ourFrame.createElement(
         "button",
         {
-           class: filter === "active" ? "active-filter" : "",
-          onClick: () => navigate("/active"),
+          class: filter === "active" ? "active-filter" : "",
+          onClick: () => router.navigate("/active"),
         },
         "Active"
       ),
@@ -120,19 +115,16 @@ export default function App() {
         "button",
         {
           class: filter === "completed" ? "active-filter" : "",
-          onClick: () => navigate("/completed"),
+          onClick: () => router.navigate("/completed"),
         },
         "Completed"
       ),
       ourFrame.createElement(
         "button",
-        {
-          onClick: () => {
-            clearCompleted();
-          },
-        },
+        { onClick: clearCompleted },
         "Clear completed"
       )
-    ) // end buttons section
-  ); // end App
+    )
+  );
 }
+
