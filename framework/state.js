@@ -1,6 +1,6 @@
 let states = [];
 let stateCursor = 0;
-let rerenderFn = null;
+let rerenderFn = null; 
 let isRendering = false;  // Track if we're in the middle of rendering
 let pendingStateUpdates = false;  // Flag for batching updates
 

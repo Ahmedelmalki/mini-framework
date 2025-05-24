@@ -42,7 +42,7 @@ export default function App() {
     "div",
     null,
      //Header(),
-    EnterTodos({inputValue, setInput, onAdd: addTodo}),
+    EnterTodos({inputValue, setInput, onAdd: addTodo}), 
     TodoList({ todos: filterTodos, onToggle: toggleTodo }),
     Controls({
       itemsLeft,
@@ -61,12 +61,17 @@ function EnterTodos({inputValue, setInput, onAdd}){
       type: "text",
       value: inputValue,
       placeholder: "enter a todo",
-      onInput: e => setInput(e.target.value),
+      onInput: e => {
+        setInput(e.target.value);
+      },
+      onKeyDown : (e) => {
+        if (e.key === 'Enter') onAdd();
+      },
     }),
     ourFrame.createElement(
       "button",
       { className: "add-btn", onClick: onAdd },
-      "add +"
+      "add"
     )
   );
 }
