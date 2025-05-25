@@ -1,22 +1,37 @@
-import { addNode, createDom, initialRender } from "../framework/dom.js"
-import { useState } from "../framework/state.js"
+import { addNode, createDom, initialRender, patch } from "../framework/dom.js"
+import { useState, resetCount } from "../framework/state.js"
 
-const [task, setTask] = useState("")
+const [task, setTask] = useState("hello")
 const handleSubmit = (e) => {
     e.preventDefault()
     const formdata = new FormData(e.target)
-    setTask(formdata.get('task')) 
-    console.log(task);
+    setTask(formdata.get('task'))
 }
 
-const vdom = {
+const CounterComponent = () => {
+    
+    let [count,setCount] = useState(0)
+    return addNode("div",{},[
+            addNode("div",{class: "counter"},[`${count}`]),
+            addNode("button", {
+                class: "btn-primary",
+                onclick: ()=> {
+                    setCount(e => e + 1); // Add this line to rerender after state change
+                    console.log(count);
+                }
+            },["increment"])
+        ])
+    
+}
+
+let vdom = {
     type: "div",
     props: {class: "content"},
     children: [
         addNode("h1",{class:"title"},["Todos"]),
         addNode("div",{class:"todo-card"},[
             addNode("div",{class:"todo-list"},[`task is: ${task}`]),
-            addNode("form",{onsubmit: ()=> handleSubmit},[
+            addNode("form",{onsubmit: handleSubmit},[
                 addNode("input",{
                     placeholder:"add todo...",
                     class: "todo-input",
@@ -28,16 +43,18 @@ const vdom = {
                     type: "submit",
                 },["ADD"])
             ]),
+            addNode(CounterComponent)
         ])
     ]
 }
 
-const dom = createDom(vdom)
-export const rerender = () => {
-    document.querySelector("#main").textContent = ""
-    initialRender(createDom(vdom),document.querySelector("#main"))
+let oldDom = null
+const main = document.querySelector('#main')
+export function rerender() {
+    patch(main,oldDom,vdom)
+    oldDom = vdom
 }
 
-const main = document.querySelector('#main')
+rerender()
 
-initialRender(dom, main)
+// initialRender(dom, main)
