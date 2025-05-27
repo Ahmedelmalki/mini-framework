@@ -11,7 +11,6 @@ const reset = () => {
 }
 
 function useState(initialState) {
-  
   if (typeof states[count] == "undefined") {
     states[count] = initialState;
   }
