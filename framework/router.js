@@ -1,12 +1,14 @@
 import { patch } from "../framework/dom.js";
 import { reset } from "../framework/state.js";
-class Router {
+export class Router {
     constructor(paths) {
         this.paths = paths
+        this.oldDom = null
+        this.currentPath = window.location.pathname
+        this.init()
     }
     init(){
-        const current = window.location.pathname
-        this.navigate(current)
+        this.navigate(this.currentPath)
     }
     navigate(pathName){
         if (window.history.length > 0) {
@@ -14,12 +16,14 @@ class Router {
         } else {
             window.history.replaceState(null, null, pathName)
         }
-        this.paths[pathName]()
+        this.currentPath = pathName
+        this.rerender()
     }
     rerender(){
         reset();
-        const vdom = App(); // Always get fresh vdom with latest state
-        patch(main, oldDom, vdom);
-        oldDom = vdom;
+        const main = document.querySelector("#main");
+        const vdom = this.paths[this.currentPath](); // Always get fresh vdom with latest state
+        patch(main, this.oldDom, vdom);
+        this.oldDom = vdom;
     }
 }

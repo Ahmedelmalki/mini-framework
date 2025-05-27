@@ -1,13 +1,10 @@
-import { rerender } from "../src/main.js";
-
+import { router } from "../src/main.js"
 let states = [];
 let count = 0;
 
-const resetStates = () => [];
 const resetCount = () => count = 0;
 const reset = () => {
   resetCount()
-  resetStates()
 }
 
 function useState(initialState) {
@@ -15,7 +12,7 @@ function useState(initialState) {
     states[count] = initialState;
   }
   const index = count;
-  let state = states[index];
+  // let state = states[index];
 
   const setState = (newValue) => {
     if (typeof newValue == "function") {
@@ -23,11 +20,11 @@ function useState(initialState) {
     } else {
       states[index] = newValue;
     }
-    state = states[index]
-    rerender()
+    // state = states[index]
+    router.rerender()
   };
   count++;
-  return [state, setState];
+  return [states[index], setState];
 };
 
 
