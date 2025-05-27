@@ -16,7 +16,7 @@ function useState(initialState) {
     states[count] = initialState;
   }
   const index = count;
-  var state = states[index];
+  let state = states[index];
 
   const setState = (newValue) => {
     if (typeof newValue == "function") {
@@ -25,11 +25,8 @@ function useState(initialState) {
       states[index] = newValue;
     }
     state = states[index]
-    console.log("new state is:", states[index], "state is =>" , state);
     rerender()
   };
-  console.log(state);
-  
   count++;
   return [state, setState];
 };
