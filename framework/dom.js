@@ -51,6 +51,8 @@ const changed = (oldNode, newNode) => {
 const patch = (parent, oldNode, newNode, index = 0) => {
   if (!oldNode) {
     parent.appendChild(createDom(newNode));
+  }else if(typeof oldNode == "string" && typeof newNode == "string" && oldNode != newNode) {
+    parent.replaceChild(document.createTextNode(newNode), parent.childNodes[index]);
   } else if (!newNode) {
     parent.removeChild(parent.childNodes[index]);
   } else if (changed(oldNode, newNode)) {

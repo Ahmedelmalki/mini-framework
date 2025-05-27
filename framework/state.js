@@ -3,7 +3,12 @@ import { rerender } from "../src/main.js";
 let states = [];
 let count = 0;
 
+const resetStates = () => [];
 const resetCount = () => count = 0;
+const reset = () => {
+  resetCount()
+  resetStates()
+}
 
 function useState(initialState) {
   
@@ -11,20 +16,24 @@ function useState(initialState) {
     states[count] = initialState;
   }
   const index = count;
-  const state = states[index];
+  var state = states[index];
+
   const setState = (newValue) => {
     if (typeof newValue == "function") {
       states[index] = newValue(states[index])
     } else {
       states[index] = newValue;
     }
-    console.log("new state is:", states[index], "state is =>" , states[index]);
+    state = states[index]
+    console.log("new state is:", states[index], "state is =>" , state);
     rerender()
   };
+  console.log(state);
+  
   count++;
-  return [states[index], setState];
+  return [state, setState];
 };
 
 
 
-export { useState, resetCount };
+export { useState, reset };
