@@ -8,25 +8,23 @@ export class Router {
     this.init();
   }
   init() {
-    this.navigate(this.currentPath);
+    this.navigate(this.currentPath, false);
     window.addEventListener("popstate", () => {
-      this.navigate(window.location.pathname);
+      this.navigate(window.location.pathname, false);
     });
     window.addEventListener("click", (e) => {
       if (e.target.tagName === "A") {
         e.preventDefault();
         const href = e.target.getAttribute("href");
-        this.navigate(href);
+        this.navigate(href, true);
       }
     });
   }
-  navigate(pathName) {
+  navigate(pathName, pushState = true) {
     if (!this.paths.hasOwnProperty(pathName)) pathName = "/404page";
 
-    if (window.history.length > 0) {
+    if (pushState) {
       window.history.pushState(null, null, pathName);
-    } else {
-      window.history.replaceState(null, null, pathName);
     }
     this.currentPath = pathName;
     this.rerender();
