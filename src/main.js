@@ -1,6 +1,7 @@
 import { addNode } from "../framework/dom.js";
 import { Router } from "../framework/router.js";
 import { useState } from "../framework/state.js";
+import { PageNotFound } from "../framework/notfound.js";
 
 // Move vdom into a function to always get latest state
 function App() {
@@ -57,20 +58,10 @@ function App() {
   };
 }
 
-// let oldDom = null;
-// const main = document.querySelector("#main");
-// export function rerender() {
-//   reset();
-//   const vdom = App(); // Always get fresh vdom with latest state
-//   patch(main, oldDom, vdom);
-//   oldDom = vdom;
-// }
 const router = new Router({
   "/": App,
+  "/404page": PageNotFound
 });
-
-// router.rerender();
 
 export { router };
 
-// initialRender(dom, main)
