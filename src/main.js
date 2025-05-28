@@ -5,63 +5,63 @@ import { PageNotFound } from "../framework/notfound.js";
 
 // Move vdom into a function to always get latest state
 function App() {
-  const [task, setTask] = useState("hello");
-
-  const handleSubmit = (e) => {
+  const [todos, setTodos] = useState([]);
+  const [data, setData] = useState([])
+  const HandleSubmit = (e) => {
     e.preventDefault();
-    const formdata = new FormData(e.target);
-    setTask(formdata.get("task"));
+    const formData = new FormData(e.target);
+    let task = {
+      name: formData.get("todo"),
+      type: "active",
+    };
+    setTodos(todos.push(task));
+    e.target.reset();
+    let data2 = todos.map((el) => addNode("div", { class: "todo-item" }, [
+      addNode("label", {}, [
+        addNode("input", { type: "checkbox" }),
+        addNode("span", {}, [el.name]),
+      ]),
+    ])
+  );
+    setData(data2);
+    console.log(todos);
   };
-  let [count, setCount] = useState(0);
+  
+  
   return {
     type: "div",
     props: { class: "content" },
     children: [
       addNode("h1", { class: "title" }, ["Todos"]),
       addNode("div", { class: "todo-card" }, [
-        addNode("div", { class: "todo-list" }, [`task is: ${task}`]),
-        addNode("form", { onsubmit: handleSubmit }, [
-          addNode(
-            "input",
-            {
-              placeholder: "add todo...",
+        addNode(
+          "form",
+          {
+            class: "todo-form",
+            method: "post",
+            onsubmit: HandleSubmit,
+          },
+          [
+            addNode("input", {
               class: "todo-input",
-              name: "task",
-              type: "text",
-            },
-            []
-          ),
-          addNode(
-            "button",
-            {
-              class: "add-btn",
-              type: "submit",
-            },
-            ["ADD"]
-          ),
-        ]),
-        addNode("div", {}, [
-          addNode("div", { class: "counter" }, [`${count}`]),
-          addNode(
-            "button",
-            {
-              class: "btn-primary",
-              onclick: () => {
-                setCount(count += 1);
-              },
-            },
-            ["increment"]
-          ),
-        ]),
+              name: "todo",
+              placeholder: "Create new task...",
+            }),
+            addNode("button", { class: "submit-btn", type: "submit" }, [
+              "create",
+            ]),
+          ]
+        ),
+        addNode("div", { class: "todos-list" }, []),
       ]),
+      ...data
     ],
   };
 }
 
 const router = new Router({
   "/": App,
-  "/404page": PageNotFound
+  "/404page": PageNotFound,
 });
 
 export { router };
-
