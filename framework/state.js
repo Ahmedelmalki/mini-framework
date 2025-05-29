@@ -20,7 +20,7 @@ function useState(initialState) {
     } else {
       states[index] = newValue;
     }
-    // state = states[index]
+        
     router.rerender()
   };
   count++;

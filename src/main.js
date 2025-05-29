@@ -1,4 +1,4 @@
-import { addNode } from "../framework/dom.js";
+import { addNode, setElClass } from "../framework/dom.js";
 import { Router } from "../framework/router.js";
 import { useState } from "../framework/state.js";
 import { PageNotFound } from "../framework/notfound.js";
@@ -7,25 +7,53 @@ import { PageNotFound } from "../framework/notfound.js";
 function App() {
   const [todos, setTodos] = useState([]);
   const [data, setData] = useState([]);
+  let count = 1;
   const HandleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     let task = {
+      id: count,
       name: formData.get("todo"),
-      type: "active",
+      completed: false,
     };
     setTodos(todos.push(task));
     e.target.reset();
-    let todoItem = todos.map((el) =>
-      addNode("div", { class: "todo-item" }, [
-        addNode("label", {}, [
-          addNode("input", { type: "checkbox" }),
-          addNode("span", {class: "todo-text"}, [el.name]),
-        ]),
-      ])
-    );
+    let idEl = 0;
+    let todoItem = todos.map((el) => {
+      return addNode(
+        "div",
+        {
+          class: "todo-item",
+          id: `id_${el.id}`,
+        },
+        [
+          addNode("input", {
+            type: "checkbox",
+            id: `id_${el.id}_check`,
+            onclick: () => {
+              setTodos((e) =>
+                e.id == el.id ? (e.completed = !e.completed) : e
+              );
+              el.completed = !el.completed;
+              setElClass(
+                `#id_${el.id}`,
+                el.completed ? "todo-item completed" : "todo-item active"
+              );
+            },
+          }),
+          addNode(
+            "label",
+            {
+              for: `id_${el.id}_check`,
+            },
+            [addNode("span", { class: "todo-text" }, [el.name])]
+          ),
+        ]
+      );
+    });
+
     setData(todoItem);
-    console.log(todos);
+    count++;
   };
 
   return {

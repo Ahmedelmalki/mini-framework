@@ -1,5 +1,3 @@
-
-
 // this function create a virtual node element
 const addNode = (type, props = {}, children = []) => {
   if (typeof type == "function") {
@@ -35,7 +33,6 @@ const createDom = (vdom) => {
   return el;
 };
 
-
 const patch = (parent, oldNode, newNode, index = 0) => {
   if (!oldNode) {
     parent.appendChild(createDom(newNode));
@@ -52,7 +49,7 @@ const patch = (parent, oldNode, newNode, index = 0) => {
     parent.removeChild(parent.childNodes[index]);
   } else if (oldNode.type != newNode.type) {
     parent.replaceChild(createDom(newNode), parent.childNodes[index]);
-  } else if (JSON.stringify(oldNode.props) != JSON.stringify(newNode.props)) {
+  } else if (JSON.stringify(oldNode.props) !== JSON.stringify(newNode.props)) {
     parent.replaceChild(createDom(newNode), parent.childNodes[index]);
   } else if (newNode.type) {
     const oldLen = oldNode.children.length;
@@ -71,5 +68,8 @@ const patch = (parent, oldNode, newNode, index = 0) => {
   }
 };
 
+const setElClass = (id, classes) =>
+  (document.querySelector(id).classList = classes);
+const selectEl = (tag) => document.querySelector(tag);
 
-export { addNode, createDom, patch };
+export { addNode, createDom, patch, setElClass, selectEl };

@@ -94,3 +94,8 @@ body {
 .todo-text {
     margin: 0 10px;
 }
+
+.completed {
+    color: #999999;
+    text-decoration: line-through;
+} 
