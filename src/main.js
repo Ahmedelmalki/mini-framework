@@ -6,7 +6,7 @@ import { PageNotFound } from "../framework/notfound.js";
 // Move vdom into a function to always get latest state
 function App() {
   const [todos, setTodos] = useState([]);
-  const [data, setData] = useState([])
+  const [data, setData] = useState([]);
   const HandleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -16,18 +16,18 @@ function App() {
     };
     setTodos(todos.push(task));
     e.target.reset();
-    let data2 = todos.map((el) => addNode("div", { class: "todo-item" }, [
-      addNode("label", {}, [
-        addNode("input", { type: "checkbox" }),
-        addNode("span", {}, [el.name]),
-      ]),
-    ])
-  );
-    setData(data2);
+    let todoItem = todos.map((el) =>
+      addNode("div", { class: "todo-item" }, [
+        addNode("label", {}, [
+          addNode("input", { type: "checkbox" }),
+          addNode("span", {class: "todo-text"}, [el.name]),
+        ]),
+      ])
+    );
+    setData(todoItem);
     console.log(todos);
   };
-  
-  
+
   return {
     type: "div",
     props: { class: "content" },
@@ -54,7 +54,7 @@ function App() {
         ),
         addNode("div", { class: "todos-list" }, []),
       ]),
-      ...data
+      ...data,
     ],
   };
 }
