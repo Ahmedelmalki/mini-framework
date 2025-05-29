@@ -18,7 +18,6 @@ function App() {
     };
     setTodos(todos.push(task));
     e.target.reset();
-    let idEl = 0;
     let todoItem = todos.map((el) => {
       return addNode(
         "div",
@@ -83,12 +82,21 @@ function App() {
         addNode("div", { class: "todos-list" }, []),
       ]),
       ...data,
+      addNode("div", { class: "todo-card-footer" }, [
+        addNode("a", { href: "/" }, ["All"]),
+        addNode("a", { href: "/completed" }, ["Completed"]),
+        addNode("a", { href: "/active" }, ["Active"]),
+        addNode("a", { href: "/clear" }, ["Clear Completed"]),
+      ]),
     ],
   };
 }
 
 const router = new Router({
   "/": App,
+  "/completed": App,
+  "/active": App,
+  "/clear": App,
   "/404page": PageNotFound,
 });
 
