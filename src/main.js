@@ -16,6 +16,10 @@ function App() {
       name: formData.get("todo"),
       completed: false,
     };
+    if (task.name.trim().length === 0) {
+      e.target.reset();
+      return;
+    }
     setTodos(todos.push(task));
     e.target.reset();
     let todoItem = todos.map((el) => {

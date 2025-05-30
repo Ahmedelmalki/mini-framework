@@ -4,6 +4,7 @@
     margin: 0;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
+
 body {
     min-height: 100vh;
 }
@@ -15,11 +16,13 @@ body {
     align-items: center;
     justify-content: center;
 }
+
 .err-msg {
     font-family: 'Courier New', Courier, monospace;
     font-size: 50px;
     font-weight: 700;
 }
+
 .err-link {
     color: blue;
     font-family: 'Courier New', Courier, monospace;
@@ -28,6 +31,7 @@ body {
     margin: 20px 0;
     display: block;
 }
+
 .content {
     display: flex;
     align-items: center;
@@ -35,6 +39,7 @@ body {
     flex-direction: column;
 
 }
+
 .title {
     color: maroon;
     font-size: 70px;
@@ -46,12 +51,14 @@ body {
     width: 700px;
     max-width: 90%;
 }
+
 .todo-form {
     width: 100%;
     display: flex;
     justify-content: space-between;
     /* border: 2px solid black; */
 }
+
 .todo-input {
     width: calc(100% - 110px);
     padding: 0 10px;
@@ -86,9 +93,9 @@ body {
     max-width: 90%;
     padding: 15px 0;
     border-bottom: 2px solid #0f0fb3;
-    font-size: 20px;
+    font-size: 14px;
     font-weight: 600;
-    color: #212121;
+    color: #272727;
 }
 
 .todo-text {
@@ -98,4 +105,24 @@ body {
 .completed {
     color: #999999;
     text-decoration: line-through;
-} 
+}
+
+.todo-card-footer {
+    display: flex;
+    justify-content: space-between;
+    width: 700px;
+    max-width: 90%;
+    padding: 15px 15px;
+    border: 2px solid #0f0fb3;
+    margin: 20px 0;
+    border-radius: 6px;
+    a {
+        font-size: 16px;
+        font-weight: 600;
+        color: #212121;
+    }
+    a:hover {
+        color: #0f0fb3;
+    }
+
+}
