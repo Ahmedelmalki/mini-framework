@@ -1,10 +1,15 @@
 import { router } from "../src/main.js"
+
 let states = [];
 let count = 0;
+let isUpdating = false;
+let pendingUpdates = new Set(); // Track which states need updates
 
 const resetCount = () => count = 0;
 const reset = () => {
   resetCount()
+  pendingUpdates.clear();
+  isUpdating = false;
 }
 
 function useState(initialState) {
@@ -12,17 +17,28 @@ function useState(initialState) {
     states[count] = initialState;
   }
   const index = count;
-  // let state = states[index];
-
   const setState = (newValue) => {
-    if (typeof newValue == "function") {
-      states[index] = newValue(states[index])
-    } else {
-      states[index] = newValue;
+    const nextState = typeof newValue === "function"
+      ? newValue(states[index])
+      : newValue;
+
+    if (states[index] !== nextState) {
+      states[index] = nextState;
+      // pendingUpdates.add(index);
+
+      if (!isUpdating) {
+        isUpdating = true;
+        Promise.resolve().then(() => {
+          // isUpdating = false;
+          // if (pendingUpdates.size > 0) {
+            // pendingUpdates.clear();
+            router.rerender();
+          // }
+        });
+      }
     }
-        
-    router.rerender()
   };
+
   count++;
   return [states[index], setState];
 };

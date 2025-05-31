@@ -1,5 +1,6 @@
 import { patch } from "../framework/dom.js";
 import { reset } from "../framework/state.js";
+
 export class Router {
   constructor(paths) {
     this.paths = paths;
