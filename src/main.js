@@ -53,11 +53,8 @@ function App() {
                 addNode("input", {
                     type: "checkbox",
                     id: `id_${todo.id}_check`,
-                    checked: false,
-                    onclick: (e) => {
-                        e.target.checked = todo.completed;
-                        toggleTodo(todo.id)
-                    }
+                    onclick: () => toggleTodo(todo.id),
+                    ...(todo.completed && { checked: true }),
                 }),
                 addNode(
                     "label",
