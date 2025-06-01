@@ -46,7 +46,7 @@ const patch = (parent, oldNode, newNode, index = 0) => {
       parent.childNodes[index]
     );
   } else if (!newNode) {
-    parent.removeChild(parent.childNodes[index]);
+    parent.removeChild(parent.childNodes[index-1]);
   } else if (oldNode.type != newNode.type) {
     parent.replaceChild(createDom(newNode), parent.childNodes[index]);
   } else if (JSON.stringify(oldNode.props) !== JSON.stringify(newNode.props)) {

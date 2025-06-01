@@ -17,7 +17,10 @@ function useState(initialState) {
     states[count] = initialState;
   }
   const index = count;
+  console.log("initstate", states[index]);
   const setState = (newValue) => {
+    console.log("nextState", newValue);
+
     const nextState = typeof newValue === "function"
       ? newValue(states[index])
       : newValue;
@@ -31,8 +34,8 @@ function useState(initialState) {
         Promise.resolve().then(() => {
           // isUpdating = false;
           // if (pendingUpdates.size > 0) {
-            // pendingUpdates.clear();
-            router.rerender();
+          // pendingUpdates.clear();
+          router.rerender();
           // }
         });
       }
