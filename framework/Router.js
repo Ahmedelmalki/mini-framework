@@ -1,8 +1,7 @@
 // Router.js
 
 import { ourFrame } from "./dom.js";
-import { effect } from "./effect.js";
-import { state, injectRerender } from "./state.js";
+import { injectRerender } from "./state.js";
 
 
 export class Router {
@@ -45,10 +44,6 @@ export class Router {
 
 
   render(component) {
-    state.startRendering();
-    effect.resetEffects();
-    state.resetCursor();
-
     const newApp = component();
     // console.log(newApp);
 
@@ -59,8 +54,6 @@ export class Router {
     }
 
     this.currentApp = newApp;
-
-    state.endRendering();
   }
 
   rerender() {

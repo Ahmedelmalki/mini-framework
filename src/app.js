@@ -8,7 +8,15 @@ export default function App() {
 
   const [todos, setTodos] = state.useState([]);
   const [inputValue, setInput] = state.useState("");
+  const [count, setCount] = state.useState(0);
+  console.log("test");
 
+  // const handleClick = () => {
+  //   // Without batching, this would cause 3 rerenders
+  //   setCount(c => c + 1);
+  //   setCount(c => c + 1);
+  //   setCount(c => c + 1);
+  // };
   const currentPath = window.location.pathname;
   let filter = "all";
   if (currentPath === "/active") filter = "active";
@@ -17,6 +25,7 @@ export default function App() {
   const itemsLeft = todos.filter(todo => !todo.completed).length;
 
   const addTodo = () => {
+    // handleClick();
     if (!inputValue.trim()) return;
     setTodos([...todos, { text: inputValue.trim(), completed: false }]);
     setInput("");

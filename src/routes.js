@@ -1,5 +1,6 @@
 import App from "./app.js"; // Your main component
 import NotFound from "./NotFound.js";
+import Counter from "./counter.js";
 
 export const routes = {
   "/": App,          // All todos
