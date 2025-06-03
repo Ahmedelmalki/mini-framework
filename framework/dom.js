@@ -69,9 +69,9 @@ export function diff(oldTree, newTree) {
   };
 }
 
-// Fix 2: Tslih f updateProps function - mochkil dyal events
+// fix eventes
 function updateProps(dom, oldProps, newProps) {
-  // Ta3amel m3a dom._listeners li kayna bach njiw events
+  
   if (!dom._listeners) dom._listeners = {};
 
   // Add or update props
@@ -82,7 +82,6 @@ function updateProps(dom, oldProps, newProps) {
       if (key.startsWith("on") && typeof newProps[key] === "function") {
         const eventType = key.toLowerCase().substring(2);
 
-        // Removiw ay lisneres ila
         if (dom._listeners[eventType]) {
           dom.removeEventListener(eventType, dom._listeners[eventType]);
         }
@@ -115,7 +114,7 @@ function updateProps(dom, oldProps, newProps) {
   }
 }
 
-// Fix 3: Tslih dyal createElement - kaykhasshna nkhedmo b _listeners
+// use lisnners to fix creatEle
 export function createElement(vNode) {
   if (!vNode) return null;
 
@@ -124,7 +123,7 @@ export function createElement(vNode) {
   }
 
   const element = document.createElement(vNode.type);
-  element._listeners = {}; // Add _listeners object
+  element._listeners = {};
 
   // Set properties
   for (const key in vNode.props) {
