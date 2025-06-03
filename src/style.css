@@ -5,7 +5,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   min-height: 100%;
   font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
   background: #01052b;
@@ -87,6 +88,7 @@ body {
   border-bottom: 1px solid #ededed;
   padding: 1rem 0.5rem;
   display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 0.5rem;
   color: #ccc;
@@ -155,4 +157,17 @@ button:hover {
 
 .home-btn:hover {
   background: #535bf2;
+}
+
+.delete-btn {
+  border: none;
+  background: none;
+  color: #cc9a9a;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0 8px;
+}
+
+.delete-btn:hover {
+  color: #af5b5e;
 }

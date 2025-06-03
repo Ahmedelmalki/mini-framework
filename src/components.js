@@ -21,7 +21,7 @@ export function renderForm(inputValue, setInput, addTodo) {
   );
 }
 
-export function renderTodos(filteredTodos, toggleTodo) {
+export function renderTodos(filteredTodos, toggleTodo, deleteTodo) {
   return ourFrame.createElement(
     "section",
     { class: "todos" },
@@ -38,7 +38,7 @@ export function renderTodos(filteredTodos, toggleTodo) {
             ourFrame.createElement("input", {
               type: "checkbox",
               checked: todo.completed,
-              onChange: () => toggleTodo(index),
+              onChange: () => toggleTodo(todo.id),
             }),
             " ",
             ourFrame.createElement(
@@ -46,6 +46,14 @@ export function renderTodos(filteredTodos, toggleTodo) {
               { class: todo.completed ? "completed" : "" },
               todo.text
             )
+          )
+          , ourFrame.createElement(
+            "button",
+            {
+              class: "delete-btn",
+              onClick: () => deleteTodo(todo.id),
+            },
+            "×"
           )
         )
       )

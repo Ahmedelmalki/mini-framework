@@ -1,22 +1,14 @@
 import { ourFrame } from "../framework/dom.js";
 import { state } from "../framework/state.js";
 import { renderFilters, renderForm, renderTodos } from "./components.js";
-//import router from './main.js';
 
 export default function App() {
   state.resetCursor();
 
   const [todos, setTodos] = state.useState([]);
   const [inputValue, setInput] = state.useState("");
-  const [count, setCount] = state.useState(0);
-  console.log("test");
+  const id = todos.length > 0 ? todos[todos.length - 1].id + 1 : 1
 
-  // const handleClick = () => {
-  //   // Without batching, this would cause 3 rerenders
-  //   setCount(c => c + 1);
-  //   setCount(c => c + 1);
-  //   setCount(c => c + 1);
-  // };
   const currentPath = window.location.pathname;
   let filter = "all";
   if (currentPath === "/active") filter = "active";
@@ -25,9 +17,8 @@ export default function App() {
   const itemsLeft = todos.filter(todo => !todo.completed).length;
 
   const addTodo = () => {
-    // handleClick();
     if (!inputValue.trim()) return;
-    setTodos([...todos, { text: inputValue.trim(), completed: false }]);
+    setTodos([...todos, { text: inputValue.trim(), completed: false, id: id }]);
     setInput("");
   };
 
@@ -36,10 +27,13 @@ export default function App() {
   };
 
   const toggleTodo = (idx) => {
-    const updated = todos.slice();
-    updated[idx].completed = !updated[idx].completed;
-    setTodos(updated);
-  };
+    setTodos(todos.map(el => {
+      if (el.id === idx) {
+        return { ...el, completed: !el.completed };
+      }
+      return el;
+    }))
+  }
 
   const filteredTodos = todos.filter(todo => {
     if (filter === "active") return !todo.completed;
@@ -47,12 +41,16 @@ export default function App() {
     return true;
   });
 
+  const deleteTodo = (idx) => {
+    setTodos(todos.filter((el) => el.id !== idx));
+  };
+
   return ourFrame.createElement(
     "div",
     { class: "todos-section" },
     ourFrame.createElement("h1", { class: "title" }, "todos"),
     renderForm(inputValue, setInput, addTodo),
-    renderTodos(filteredTodos, toggleTodo),
+    renderTodos(filteredTodos, toggleTodo, deleteTodo),
     renderFilters(itemsLeft, filter, clearCompleted)
   );
 }
