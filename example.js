@@ -1,60 +1,23 @@
+import { state } from '../framework/state.js';
 import { ourFrame } from '../framework/dom.js';
-import { useState } from '../framework/state.js';
-
+// Test component
 function Counter() {
-  const [count, setCount] = useState(0);
-  const [renderCount, setRenderCount] = useState(0);
-  
-  // Log render count for debugging batching
-  console.log(`Rendering Counter, render #${renderCount}`);
-  
-  const handleClick = () => {
-    console.log('Button clicked, current count:', count);
-    
-    // Test batch updates
-    setCount(c => {
-      console.log('First update, c =', c);
-      return c + 1;
-    });
-    setCount(c => {
-      console.log('Second update, c =', c);
-      return c + 1;
-    });
-    setCount(c => {
-      console.log('Third update, c =', c);
-      return c + 1;
-    });
-    
-    // Track number of rerenders
-    setRenderCount(r => r + 1);
-  };
+    state.resetCursor(); // Reset state cursor for this component
+    const [count, setCount] = state.useState(0);
+    console.log('Render count:', count);
 
-  return ourFrame.createElement(
-    'div',
-    { class: 'counter-container' },
-    [
-      ourFrame.createElement(
-        'h2',
-        null,
-        [`Count: ${count}`]
-      ),
-      ourFrame.createElement(
+    const handleClick = () => {
+        console.log('Before updates');
+        setCount(c => c + 1);
+        setCount(c => c + 1);
+        setCount(c => c + 1);
+        console.log('After updates');
+    };
+
+    return ourFrame.createElement(
         'button',
-        { 
-          onclick: handleClick,
-          class: 'increment-button' 
-        },
-        ['Increment 3x']
-      ),
-      ourFrame.createElement(
-        'p',
-        { class: 'render-info' },
-        [`Number of renders: ${renderCount}`]
-      )
-    ]
-  );
+        { onclick: handleClick },
+        `Count: ${count}`
+    );
 }
-
-// Mount the app
-const container = document.getElementById('root');
-ourFrame.render(Counter(), container);
+export default Counter;
