@@ -3,12 +3,17 @@
 A lightweight, React-inspired JavaScript framework built from scratch that provides DOM abstraction, state management, routing, and event handling capabilities.
 
 ## Table of Contents
-- [Overview](#overview)
 - [Core Features](#core-features)
-- [Getting Started](#getting-started)
-- [API Reference](#api-reference)
-- [Examples](#examples)
-- [Architecture](#architecture)
+- [Installation](#installation)
+- [Core Concepts](#core-concepts)
+  - [Element Creation](#element-creation)
+  - [State Management](#state-management)
+  - [Routing](#routing)
+- [Complete Example](#complete-example)
+- [Project Setup](#project-setup)
+- [Best Practices](#best-practices)
+- [Limitations](#limitations)
+- [Features](#features)
 
 ## Overview
 
@@ -27,7 +32,6 @@ OurFrame is a custom JavaScript framework that implements the fundamental concep
 - Batched updates for performance
 
 ### 3. Routing System
-- Client-side routing with `useLocation` and `useNavigate`
 - URL synchronization with application state
 - Browser history support
 
@@ -36,367 +40,191 @@ OurFrame is a custom JavaScript framework that implements the fundamental concep
 - Automatic event listener cleanup
 - Support for all standard DOM events
 
-### 5. Effect System
-- `useEffect` hook for side effects
-- Dependency tracking and cleanup
-- Lifecycle management
 
 ## Getting Started
 
 ### Project Structure
 ```
-project/
+.
 ├── framework/
-│   ├── dom.js      # Virtual DOM and rendering
-│   ├── state.js    # State management
-│   ├── route.js    # Routing system
-│   └── effect.js   # Effect hooks
+│   ├── dom.js          # Virtual DOM and rendering
+│   ├── Router.js       # Routing system
+│   └── state.js        # State management
 ├── src/
-│   ├── main.js     # Application entry point
-│   └── app.js      # Main application component
-└── index.html      # HTML entry point
+│   ├── app.js          # Main todo app component
+│   ├── components.js   # Reusable UI components
+│   ├── main.js         # Application entry point
+│   ├── NotFound.js     # 404 page component
+│   ├── routes.js       # Route definitions
+│   └── style.css       # Application styles
+├── .gitignore
+├── example.js          # Counter example component
+├── index.html          # HTML entry point
+└── README.md          # Project documentation
 ```
 
-### Basic Setup
+## Installation
 
-1. Create your HTML file:
+1. Clone or download the framework
+2. Include it in your project structure
+3. Import required modules
+
+## Core Concepts
+
+### Element Creation
+
+The framework uses `ourFrame.createElement()` similar to React's createElement:
+
+```javascript
+import { ourFrame } from '../framework/dom.js';
+
+// Basic element
+const element = ourFrame.createElement('div', { class: 'container' }, 'Hello World');
+
+// Nested elements
+const card = ourFrame.createElement(
+  'div',
+  { class: 'card' },
+  ourFrame.createElement('h1', null, 'Title'),
+  ourFrame.createElement('p', null, 'Content')
+);
+
+
+import { state } from '../framework/state.js';
+
+function Counter() {
+  state.resetCursor(); // Required at start of component
+  const [count, setCount] = state.useState(0);
+  
+  return ourFrame.createElement(
+    'button',
+    { onClick: () => setCount(count + 1) },
+    `Count: ${count}`
+  );
+}
+```
+
+### Routing
+
+Setting up routes:
+
+```javascript
+// routes.js
+import HomePage from './pages/Home.js';
+import AboutPage from './pages/About.js';
+
+export const routes = {
+  "/": HomePage,
+  "/about": AboutPage,
+  "/404": NotFound
+};
+
+// main.js
+import { Router } from '../framework/Router.js';
+import { routes } from './routes.js';
+
+const router = new Router(routes, document.getElementById('root'));
+```
+
+## Complete Example
+
+Here's a complete example of a todo app component:
+
+```javascript
+import { ourFrame } from "../framework/dom.js";
+import { state } from "../framework/state.js";
+
+function TodoApp() {
+  state.resetCursor();
+  const [todos, setTodos] = state.useState([]);
+  const [input, setInput] = state.useState("");
+
+  const addTodo = () => {
+    if (!input.trim()) return;
+    setTodos([...todos, { id: Date.now(), text: input, completed: false }]);
+    setInput("");
+  };
+
+  return ourFrame.createElement(
+    'div',
+    { class: 'todo-app' },
+    ourFrame.createElement(
+      'form',
+      {
+        onSubmit: (e) => {
+          e.preventDefault();
+          addTodo();
+        }
+      },
+      ourFrame.createElement('input', {
+        value: input,
+        onInput: (e) => setInput(e.target.value),
+        placeholder: 'Add todo'
+      }),
+      ourFrame.createElement('button', { type: 'submit' }, 'Add')
+    ),
+    ourFrame.createElement(
+      'ul',
+      null,
+      ...todos.map(todo => 
+        ourFrame.createElement('li', { key: todo.id }, todo.text)
+      )
+    )
+  );
+}
+```
+
+## Project Setup
+
+Basic project structure:
+
+```
+my-app/
+├── framework/          # OurFrame core files
+├── src/
+│   ├── components/    # Your components
+│   ├── pages/        # Page components
+│   ├── main.js       # Entry point
+│   └── routes.js     # Route definitions
+└── index.html        # HTML entry
+```
+
+Basic HTML setup:
+
 ```html
 <!DOCTYPE html>
 <html>
 <head>
-    <title>OurFrame App</title>
+  <title>OurFrame App</title>
 </head>
 <body>
-    <div id="root"></div>
-    <script type="module" src="src/main.js"></script>
+  <div id="root"></div>
+  <script type="module" src="/src/main.js"></script>
 </body>
 </html>
 ```
 
-2. Set up your main.js:
-```javascript
-import { ourFrame } from "../framework/dom.js";
-import App from "./app.js";
-import { injectRerender, state } from "../framework/state.js";
-import { effect } from "../framework/effect.js";
+## Best Practices
 
-const container = document.getElementById("root");
-let currentApp = null;
+1. Always call `state.resetCursor()` at the start of each component
+2. Keep components small and focused
+3. Use meaningful component and variable names
+4. Handle routing through the Router instance
+5. Use batch updates for state changes when possible
 
-function initialRender() {
-    state.startRendering();
-    currentApp = App();
-    ourFrame.render(currentApp, container);
-    state.endRendering();
-}
+## Limitations
 
-function rerender() {
-    state.startRendering();
-    effect.resetEffects();
-    state.resetCursor();
-    
-    const newApp = App();
-    ourFrame.patch(container, currentApp, newApp);
-    currentApp = newApp;
-    state.endRendering();
-}
+- No JSX support (uses createElement API)
+- Simple state management (no context or reducers)
+- Basic routing system
+- No built-in dev tools
 
-injectRerender(rerender);
-initialRender();
+## Features
+
+- Virtual DOM for efficient updates
+- React-like component architecture
+- Built-in routing system
+- State management with hooks
+- Event handling system
 ```
 
-## API Reference
-
-### ourFrame.createElement(type, props, ...children)
-
-Creates a virtual element that represents a DOM node.
-
-**Parameters:**
-- `type` (string): HTML tag name (e.g., 'div', 'span', 'button')
-- `props` (object): Element properties and attributes
-- `children` (...any): Child elements or text content
-
-**Example:**
-```javascript
-// Create a simple div with text
-const element = ourFrame.createElement('div', null, 'Hello World');
-
-// Create a button with click handler
-const button = ourFrame.createElement('button', {
-    onClick: () => console.log('Clicked!'),
-    className: 'my-button'
-}, 'Click me');
-
-// Create nested elements
-const container = ourFrame.createElement('div', { className: 'container' },
-    ourFrame.createElement('h1', null, 'Title'),
-    ourFrame.createElement('p', null, 'Content')
-);
-```
-
-### state.useState(initialValue)
-
-Creates a state variable with a setter function, similar to React's useState.
-
-**Parameters:**
-- `initialValue` (any): Initial state value
-
-**Returns:**
-- Array: `[currentValue, setterFunction]`
-
-**Example:**
-```javascript
-import { state } from "../framework/state.js";
-
-function MyComponent() {
-    state.resetCursor(); // Always call this at the start of components
-    
-    const [count, setCount] = state.useState(0);
-    const [name, setName] = state.useState('');
-    
-    return ourFrame.createElement('div', null,
-        ourFrame.createElement('p', null, `Count: ${count}`),
-        ourFrame.createElement('button', {
-            onClick: () => setCount(count + 1)
-        }, 'Increment'),
-        ourFrame.createElement('input', {
-            value: name,
-            onInput: (e) => setName(e.target.value)
-        })
-    );
-}
-```
-
-### route.useLocation()
-
-Returns the current URL pathname and automatically updates when the route changes.
-
-**Returns:**
-- String: Current pathname
-
-**Example:**
-```javascript
-import { route } from "../framework/route.js";
-
-function MyComponent() {
-    const location = route.useLocation();
-    
-    return ourFrame.createElement('div', null,
-        ourFrame.createElement('p', null, `Current path: ${location}`)
-    );
-}
-```
-
-### route.useNavigate()
-
-Returns a navigation function to programmatically change routes.
-
-**Returns:**
-- Function: `navigate(path)` - navigates to the specified path
-
-**Example:**
-```javascript
-import { route } from "../framework/route.js";
-
-function MyComponent() {
-    const navigate = route.useNavigate();
-    
-    return ourFrame.createElement('div', null,
-        ourFrame.createElement('button', {
-            onClick: () => navigate('/about')
-        }, 'Go to About'),
-        ourFrame.createElement('button', {
-            onClick: () => navigate('/home')
-        }, 'Go to Home')
-    );
-}
-```
-
-### effect.useEffect(callback, dependencies)
-
-Executes side effects with optional dependency tracking and cleanup.
-
-**Parameters:**
-- `callback` (function): Effect function, can return a cleanup function
-- `dependencies` (array): Array of dependencies to watch for changes
-
-**Example:**
-```javascript
-import { effect } from "../framework/effect.js";
-
-function MyComponent() {
-    const [count, setCount] = state.useState(0);
-    
-    // Effect that runs on every render
-    effect.useEffect(() => {
-        console.log('Component rendered');
-    });
-    
-    // Effect with dependencies
-    effect.useEffect(() => {
-        document.title = `Count: ${count}`;
-    }, [count]);
-    
-    // Effect with cleanup
-    effect.useEffect(() => {
-        const timer = setInterval(() => {
-            console.log('Timer tick');
-        }, 1000);
-        
-        return () => clearInterval(timer); // Cleanup function
-    }, []);
-    
-    return ourFrame.createElement('div', null, `Count: ${count}`);
-}
-```
-
-## Examples
-
-### Simple Counter Component
-```javascript
-function Counter() {
-    state.resetCursor();
-    
-    const [count, setCount] = state.useState(0);
-    
-    return ourFrame.createElement('div', null,
-        ourFrame.createElement('h2', null, 'Counter Example'),
-        ourFrame.createElement('p', null, `Current count: ${count}`),
-        ourFrame.createElement('button', {
-            onClick: () => setCount(count + 1)
-        }, '+'),
-        ourFrame.createElement('button', {
-            onClick: () => setCount(count - 1)
-        }, '-'),
-        ourFrame.createElement('button', {
-            onClick: () => setCount(0)
-        }, 'Reset')
-    );
-}
-```
-
-### Form Input Example
-```javascript
-function ContactForm() {
-    state.resetCursor();
-    
-    const [name, setName] = state.useState('');
-    const [email, setEmail] = state.useState('');
-    const [message, setMessage] = state.useState('');
-    
-    const handleSubmit = () => {
-        console.log('Form submitted:', { name, email, message });
-        // Reset form
-        setName('');
-        setEmail('');
-        setMessage('');
-    };
-    
-    return ourFrame.createElement('form', null,
-        ourFrame.createElement('input', {
-            type: 'text',
-            placeholder: 'Name',
-            value: name,
-            onInput: (e) => setName(e.target.value)
-        }),
-        ourFrame.createElement('input', {
-            type: 'email',
-            placeholder: 'Email',
-            value: email,
-            onInput: (e) => setEmail(e.target.value)
-        }),
-        ourFrame.createElement('textarea', {
-            placeholder: 'Message',
-            value: message,
-            onInput: (e) => setMessage(e.target.value)
-        }),
-        ourFrame.createElement('button', {
-            type: 'button',
-            onClick: handleSubmit
-        }, 'Submit')
-    );
-}
-```
-
-### Routing Example
-```javascript
-function App() {
-    state.resetCursor();
-    
-    const location = route.useLocation();
-    const navigate = route.useNavigate();
-    
-    // Simple routing logic
-    let currentPage;
-    switch(location) {
-        case '/about':
-            currentPage = ourFrame.createElement('div', null, 'About Page');
-            break;
-        case '/contact':
-            currentPage = ourFrame.createElement('div', null, 'Contact Page');
-            break;
-        default:
-            currentPage = ourFrame.createElement('div', null, 'Home Page');
-    }
-    
-    return ourFrame.createElement('div', null,
-        // Navigation
-        ourFrame.createElement('nav', null,
-            ourFrame.createElement('button', {
-                onClick: () => navigate('/')
-            }, 'Home'),
-            ourFrame.createElement('button', {
-                onClick: () => navigate('/about')
-            }, 'About'),
-            ourFrame.createElement('button', {
-                onClick: () => navigate('/contact')
-            }, 'Contact')
-        ),
-        // Current page content
-        currentPage
-    );
-}
-```
-
-## Architecture
-
-### How It Works
-
-1. **Virtual DOM**: The framework creates a virtual representation of the DOM using JavaScript objects. When state changes, it compares the old and new virtual DOM trees and only updates the parts that changed.
-
-2. **State Management**: Uses a cursor-based system to track state across re-renders. Each component must call `state.resetCursor()` to ensure proper state tracking.
-
-3. **Rendering Cycle**: 
-   - Component functions are called to generate virtual DOM
-   - Virtual DOM is compared with previous version (diffing)
-   - Only changed elements are updated in the real DOM
-   - Effects are processed after rendering
-
-4. **Event System**: Events are attached directly to DOM elements but managed through the framework's virtual DOM system for proper cleanup and updates.
-
-5. **Routing**: Uses the browser's History API and custom events to synchronize URL changes with application state.
-
-### Key Concepts
-
-- **Components are Functions**: Every component is a function that returns virtual DOM elements
-- **State Reset Required**: Always call `state.resetCursor()` at the beginning of component functions
-- **Immutable Updates**: State updates should use immutable patterns (create new objects/arrays)
-- **Effect Dependencies**: Use dependency arrays to control when effects run
-- **Manual Navigation**: Use `navigate()` function instead of anchor tags for routing
-
-### Performance Considerations
-
-- The framework batches state updates to prevent excessive re-renders
-- Only changed DOM nodes are updated through the diffing algorithm
-- Event listeners are properly cleaned up to prevent memory leaks
-- Effects with empty dependency arrays run only once
-
-## TodoMVC Implementation
-
-The framework includes a complete TodoMVC implementation demonstrating all features:
-- State management for todo items
-- Event handling for user interactions
-- Routing for different views (All, Active, Completed)
-- Dynamic rendering based on state changes
-
-This serves as both an example of the framework's capabilities and a reference implementation for building applications with OurFrame.
