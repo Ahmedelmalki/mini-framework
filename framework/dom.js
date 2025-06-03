@@ -69,9 +69,9 @@ export function diff(oldTree, newTree) {
   };
 }
 
-// Fix 2: Tslih f updateProps function - mochkil dyal events
+// fix eventes
 function updateProps(dom, oldProps, newProps) {
-  // Ta3amel m3a dom._listeners li kayna bach njiw events
+  
   if (!dom._listeners) dom._listeners = {};
 
   // Add or update props
