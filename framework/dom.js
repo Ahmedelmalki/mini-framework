@@ -42,23 +42,18 @@ export function diff(oldTree, newTree) {
     const oldChildren = oldTree.props.children || [];
     const newChildren = newTree.props.children || [];
 
-    // Fix: Kheddem b array static bach mat7sselch mochkila m3a modifications
-    const domChildrenArray = Array.from(dom.childNodes);
     const maxLength = Math.max(oldChildren.length, newChildren.length);
-
-    // Fix: Protection dyal indices o tracking lli tm7aw bash mawlliouch n9isso joj mrat
     const removedIndices = new Set();
 
     for (let i = 0; i < maxLength; i++) {
       if (i < oldChildren.length && i < newChildren.length) {
         // Update existing node
-        if (i < domChildrenArray.length && !removedIndices.has(i)) {
-          diff(oldChildren[i], newChildren[i])(domChildrenArray[i]);
+        if (i < dom.childNodes.length && !removedIndices.has(i)) {
+          diff(oldChildren[i], newChildren[i])(dom.childNodes[i]);
         } else {
           dom.appendChild(createElement(newChildren[i]));
         }
       } else if (i < newChildren.length) {
-        // Add new node
         dom.appendChild(createElement(newChildren[i]));
       } else if (i < oldChildren.length) {
         // Remove old node if it exists
@@ -69,7 +64,7 @@ export function diff(oldTree, newTree) {
         }
       }
     }
-
+    
     return dom;
   };
 }
