@@ -1,4 +1,4 @@
-import { ourFrame } from "../framework/dom.js";
+import { ourFrame } from "../signals/dom.js";
 import router from "./main.js";
 
 export function renderForm(inputValue, setInput, addTodo) {
@@ -6,52 +6,55 @@ export function renderForm(inputValue, setInput, addTodo) {
     "form",
     {
       class: "enterTodos",
-      onSubmit: (e) => {
+      onsubmit: (e) => {
         e.preventDefault();
         addTodo();
       },
     },
     ourFrame.createElement("input", {
       type: "text",
-      value: inputValue,
+      value: () => inputValue(), // Make value reactive
       placeholder: "enter a todo",
-      onInput: (e) => setInput(e.target.value),
+      oninput: (e) => setInput(e.target.value),
     }),
-    ourFrame.createElement("button", { class: "add-btn", type: "submit" }, "create")
+    ourFrame.createElement(
+      "button", 
+      { class: "add-btn", type: "submit" }, 
+      "create"
+    )
   );
 }
 
-export function renderTodos(filteredTodos, toggleTodo, deleteTodo) {
+export function renderTodos(getTodos, toggleTodo, deleteTodo) {
   return ourFrame.createElement(
     "section",
     { class: "todos" },
     ourFrame.createElement(
       "ul",
       null,
-      ...filteredTodos.map((todo, index) =>
+      () => getTodos().map(todo => // Make list reactive
         ourFrame.createElement(
           "li",
-          null,
+          { key: todo.id },
           ourFrame.createElement(
             "label",
             null,
             ourFrame.createElement("input", {
               type: "checkbox",
               checked: todo.completed,
-              onChange: () => toggleTodo(todo.id),
+              onchange: () => toggleTodo(todo.id),
             }),
-            " ",
             ourFrame.createElement(
               "span",
-              { class: todo.completed ? "completed" : "" },
+              { class: () => todo.completed ? "completed" : "" },
               todo.text
             )
-          )
-          , ourFrame.createElement(
+          ),
+          ourFrame.createElement(
             "button",
             {
               class: "delete-btn",
-              onClick: () => deleteTodo(todo.id),
+              onclick: () => deleteTodo(todo.id),
             },
             "×"
           )
@@ -61,38 +64,42 @@ export function renderTodos(filteredTodos, toggleTodo, deleteTodo) {
   );
 }
 
-export function renderFilters(itemsLeft, filter, clearCompleted) {
+export function renderFilters(getItemsLeft, getFilter, clearCompleted) {
   return ourFrame.createElement(
     "section",
     { class: "btns-section" },
-    ourFrame.createElement("span", null, `${itemsLeft} items left\t`),
+    ourFrame.createElement(
+      "span", 
+      null, 
+      () => `${getItemsLeft()} items left`
+    ),
     ourFrame.createElement(
       "button",
       {
-        class: filter === "all" ? "active-filter" : "",
-        onClick: () => router.navigate("/"),
+        class: () => getFilter() === "all" ? "active-filter" : "",
+        onclick: () => router.navigate("/"),
       },
       "All"
     ),
     ourFrame.createElement(
       "button",
       {
-        class: filter === "active" ? "active-filter" : "",
-        onClick: () => router.navigate("/active"),
+        class: () => getFilter() === "active" ? "active-filter" : "",
+        onclick: () => router.navigate("/active"),
       },
       "Active"
     ),
     ourFrame.createElement(
       "button",
       {
-        class: filter === "completed" ? "active-filter" : "",
-        onClick: () => router.navigate("/completed"),
+        class: () => getFilter() === "completed" ? "active-filter" : "",
+        onclick: () => router.navigate("/completed"),
       },
       "Completed"
     ),
     ourFrame.createElement(
       "button",
-      { onClick: clearCompleted },
+      { onclick: clearCompleted },
       "Clear completed"
     )
   );

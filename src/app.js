@@ -1,49 +1,68 @@
-import { ourFrame } from "../framework/dom.js";
-import { state } from "../framework/state.js";
+import { ourFrame } from "../signals/dom.js";
+import { createEffect, createSignal } from "../signals/signal.js";
 import { renderFilters, renderForm, renderTodos } from "./components.js";
 
 export default function App() {
-  state.resetCursor();
+  // Create signals
+  const [todos, setTodos] = createSignal([]);
+  const [inputValue, setInput] = createSignal("");
+  const [filter, setFilter] = createSignal("all");
 
-  const [todos, setTodos] = state.useState([]);
-  const [inputValue, setInput] = state.useState("");
-  const id = todos.length > 0 ? todos[todos.length - 1].id + 1 : 1
+  // Computed values using signals
+  const nextId = () => {
+    const currentTodos = todos();
+    return currentTodos.length > 0 
+      ? currentTodos[currentTodos.length - 1].id + 1 
+      : 1;
+  };
 
-  const currentPath = window.location.pathname;
-  let filter = "all";
-  if (currentPath === "/active") filter = "active";
-  else if (currentPath === "/completed") filter = "completed";
+  const itemsLeft = () => todos().filter(todo => !todo.completed).length;
 
-  const itemsLeft = todos.filter(todo => !todo.completed).length;
+  const filteredTodos = () => {
+    const currentFilter = filter();
+    const currentTodos = todos();
+    
+    if (currentFilter === "active") return currentTodos.filter(todo => !todo.completed);
+    if (currentFilter === "completed") return currentTodos.filter(todo => todo.completed);
+    return currentTodos;
+  };
 
+  // Event handlers
   const addTodo = () => {
-    if (!inputValue.trim()) return;
-    setTodos([...todos, { text: inputValue.trim(), completed: false, id: id }]);
+    const value = inputValue().trim();
+    if (!value) return;
+    
+    setTodos([...todos(), { 
+      id: nextId(),
+      text: value, 
+      completed: false 
+    }]);
     setInput("");
   };
 
+  const toggleTodo = (id) => {
+    setTodos(todos().map(todo => 
+      todo.id === id 
+        ? { ...todo, completed: !todo.completed }
+        : todo
+    ));
+  };
+
+  const deleteTodo = (id) => {
+    setTodos(todos().filter(todo => todo.id !== id));
+  };
+
   const clearCompleted = () => {
-    setTodos(todos.filter(todo => !todo.completed));
+    setTodos(todos().filter(todo => !todo.completed));
   };
 
-  const toggleTodo = (idx) => {
-    setTodos(todos.map(el => {
-      if (el.id === idx) {
-        return { ...el, completed: !el.completed };
-      }
-      return el;
-    }))
-  }
-
-  const filteredTodos = todos.filter(todo => {
-    if (filter === "active") return !todo.completed;
-    if (filter === "completed") return todo.completed;
-    return true;
+  // Update filter based on route
+  createEffect(() => {
+    const path = window.location.pathname;
+    if (path === "/active") setFilter("active");
+    else if (path === "/completed") setFilter("completed");
+    else setFilter("all");
   });
-
-  const deleteTodo = (idx) => {
-    setTodos(todos.filter((el) => el.id !== idx));
-  };
 
   return ourFrame.createElement(
     "div",
@@ -54,5 +73,3 @@ export default function App() {
     renderFilters(itemsLeft, filter, clearCompleted)
   );
 }
-
-
