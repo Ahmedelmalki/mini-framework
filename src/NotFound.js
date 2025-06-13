@@ -1,9 +1,7 @@
-import { ourFrame } from "../framework/dom.js";
-import { state } from "../framework/state.js";
+import { ourFrame } from '../signals/dom.js';
 import  router  from './main.js';
 
 export default function NotFound() {
-  state.resetCursor(); // Reset state cursor
   
   return ourFrame.createElement(
     "div",
