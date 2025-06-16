@@ -1,4 +1,5 @@
 import { ourFrame } from "../signals/dom.js";
+import { createEffect } from "../signals/signal.js";
 import router from "./main.js";
 
 export function renderForm(inputValue, setInput, addTodo) {
@@ -13,13 +14,18 @@ export function renderForm(inputValue, setInput, addTodo) {
     },
     ourFrame.createElement("input", {
       type: "text",
-      value: () => inputValue(), // Make value reactive
+      // value: () => inputValue(), // Make value reactive
       placeholder: "enter a todo",
       oninput: (e) => setInput(e.target.value),
+      onMount: (form) => {
+        createEffect(() => {
+          form.value = inputValue();
+        });
+      }
     }),
     ourFrame.createElement(
-      "button", 
-      { class: "add-btn", type: "submit" }, 
+      "button",
+      { class: "add-btn", type: "submit" },
       "create"
     )
   );
@@ -31,35 +37,58 @@ export function renderTodos(getTodos, toggleTodo, deleteTodo) {
     { class: "todos" },
     ourFrame.createElement(
       "ul",
-      null,
-      () => getTodos().map(todo => // Make list reactive
-        ourFrame.createElement(
-          "li",
-          { key: todo.id },
-          ourFrame.createElement(
-            "label",
-            null,
-            ourFrame.createElement("input", {
-              type: "checkbox",
-              checked: todo.completed,
-              onchange: () => toggleTodo(todo.id),
-            }),
-            ourFrame.createElement(
-              "span",
-              { class: () => todo.completed ? "completed" : "" },
-              todo.text
-            )
-          ),
-          ourFrame.createElement(
-            "button",
-            {
-              class: "delete-btn",
-              onclick: () => deleteTodo(todo.id),
-            },
-            "×"
-          )
+      {
+        onMount: (ul) => createEffect(
+          () => {
+            ul.innerHTML = ''
+            const todos = getTodos()
+            console.log(todos);
+
+            todos?.forEach(todo => {// Make list reactive
+              const li = ourFrame.createElement(
+                "li",
+                { key: todo.id },
+                ourFrame.createElement(
+                  "label",
+                  null,
+                  ourFrame.createElement("input", {
+                    type: "checkbox",
+                    checked: todo.completed,
+                    onchange: () => toggleTodo(todo.id),
+                    onMount: (checkbox) => {
+                      createEffect(() => {
+                        checkbox.checked = todo.completed
+                      })
+
+                    }
+                  }),
+                  ourFrame.createElement(
+                    "span",
+                    {
+                      class: () => todo.completed ? "completed" : "",
+                      onMount: (span) => {
+                        createEffect(() => {
+                          span.className = todo.completed ? "completed" : "";
+                        })
+                      }
+                    },
+                    todo.text
+                  )
+                ),
+                ourFrame.createElement(
+                  "button",
+                  {
+                    class: "delete-btn",
+                    onclick: () => deleteTodo(todo.id),
+                  },
+                  "×"
+                )
+              )
+              ul.appendChild(li)
+            })
+          }
         )
-      )
+      },
     )
   );
 }
@@ -69,9 +98,15 @@ export function renderFilters(getItemsLeft, getFilter, clearCompleted) {
     "section",
     { class: "btns-section" },
     ourFrame.createElement(
-      "span", 
-      null, 
-      () => `${getItemsLeft()} items left`
+      "span",
+      {
+        onMount: (span) => {
+          createEffect(
+            () => span.textContent = `${getItemsLeft()} items left`
+          )
+        }
+      },
+      null
     ),
     ourFrame.createElement(
       "button",

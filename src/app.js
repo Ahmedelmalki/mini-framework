@@ -7,7 +7,7 @@ export default function App() {
   const [todos, setTodos] = createSignal([]);
   const [inputValue, setInput] = createSignal("");
   const [filter, setFilter] = createSignal("all");
-  console.log(todos());
+  // console.log(todos());
   
 
   // Computed values using signals

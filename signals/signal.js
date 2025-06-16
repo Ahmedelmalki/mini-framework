@@ -14,7 +14,10 @@ export function createSignal(initialValue) {
     const setter = (newValue) => {
         if (newValue !== value) {
             value = newValue;
-            subscribers.forEach((effect) => effect()); // Notify subscribers
+            subscribers.forEach((effect) =>{
+            //    console.log(effect);
+                
+                effect()}); // Notify subscribers
         }
     }
     return [getter, setter]

@@ -1,24 +1,32 @@
 import { createSignal, createEffect } from '../signals/signal.js';
 import { ourFrame } from '../signals/dom.js';
-// Test component
+
 function Counter() {
     const [count, setCount] = createSignal(0);
-    createEffect(() => {
-        document.getElementById("count").textContent = `Count: ${count()}`;
-        console.log("The count is now", count());
-    });
 
     const handleClick = () => {
         setCount(count() + 1);
     };
 
     return ourFrame.createElement(
-        'button',
-        {
-            onclick: handleClick,
-            id: "count"
-        },
-        `Count: ${count()}`
+        'div',
+        { class: 'counter-container' },
+        [
+            ourFrame.createElement(
+                'button',
+                {
+                    onclick: handleClick,
+                    onMount: (element) => {
+                        // Set up reactive updates when component mounts
+                        createEffect(() => {
+                            element.textContent = `Count: ${count()}`;
+                            console.log("The count is now", count());
+                        });
+                    }
+                }
+            )
+        ]
     );
 }
+
 export default Counter;
