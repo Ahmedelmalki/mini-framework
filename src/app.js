@@ -46,11 +46,18 @@ export default function App() {
   };
 
   return ourFrame.createElement(
-    "div",
-    { class: "todos-section" },
-    ourFrame.createElement("h1", { class: "title" }, "todos"),
-    renderForm(inputValue, setInput, addTodo),
-    renderTodos(filteredTodos, toggleTodo, deleteTodo),
+    "section",
+    { class: "todoapp",
+      id : "root"
+     },
+    ourFrame.createElement("header", { class: "header" }, 
+      ourFrame.createElement("h1", null,"todos"),
+      renderForm(inputValue, setInput, addTodo),
+    ),
+    ourFrame.createElement("main",
+      {class : "main"},
+      renderTodos(filteredTodos, toggleTodo, deleteTodo),
+    ),
     renderFilters(itemsLeft, filter, clearCompleted)
   );
 }
