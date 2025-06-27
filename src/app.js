@@ -20,7 +20,10 @@ export default function App() {
 
   const addTodo = () => {
     if (!inputValue.trim()) return;
-    setTodos([...todos, { text: inputValue.trim(), completed: false, id: id }]);
+    setTodos([
+      ...todos,
+      { text: inputValue.trim(), completed: false, id: id, editing: false },
+    ]); // add flag for if the user is editing
     setInput("");
   };
 
@@ -49,6 +52,25 @@ export default function App() {
     setTodos(todos.filter((el) => el.id !== idx));
   };
 
+  // add : startEditing and finish
+  const startEditing = (id) => {
+    console.log('invoked   0000000000000000000000');
+    
+    setTodos(
+      todos.map((todo) => (todo.id === id ? { ...todo, editing: true } : todo))
+    );
+  };
+
+  const finishEditing = (id, newText) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id
+          ? { ...todo, text: newText.trim() || todo.text, editing: false }
+          : todo
+      )
+    );
+  };
+
   return ourFrame.createElement(
     "section",
     { class: "todoapp", id: "root" },
@@ -61,7 +83,7 @@ export default function App() {
     ourFrame.createElement(
       "main",
       { class: "main" },
-      renderTodos(filteredTodos, toggleTodo, deleteTodo)
+      renderTodos(filteredTodos, toggleTodo, deleteTodo, startEditing, finishEditing)
     ),
     renderFilters(itemsLeft, filter, clearCompleted)
   );
