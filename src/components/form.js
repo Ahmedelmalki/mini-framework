@@ -10,11 +10,23 @@ export function renderForm(inputValue, setInput, addTodo) {
         addTodo();
       },
     },
+    ourFrame.createElement(
+      "div",
+      { class: "toggle-all-container" },
+      ourFrame.createElement(
+        "input",
+        { class: "toggle-all", type: "checkbox", id: "toggle-all" },
+        ourFrame.createElement("label", { class: "toggle-all-label",
+          for: "toggle-all"
+         },
+          "Toggle All Input")
+      )
+    ),
     ourFrame.createElement("input", {
       class: "new-todo",
       type: "text",
       value: inputValue,
-      placeholder: "enter a todo",
+      placeholder: "What needs to be done?",
       onInput: (e) => setInput(e.target.value),
     })
     // ourFrame.createElement("button", { class: "add-btn", type: "submit" }, "create")
