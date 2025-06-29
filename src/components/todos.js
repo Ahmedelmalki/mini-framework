@@ -1,4 +1,3 @@
-import { type } from "os";
 import { ourFrame } from "../../framework/dom.js";
 
 export function renderTodos(
