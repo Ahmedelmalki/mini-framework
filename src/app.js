@@ -54,8 +54,6 @@ export default function App() {
 
   // add : startEditing and finish
   const startEditing = (id) => {
-    console.log('invoked   0000000000000000000000');
-    
     setTodos(
       todos.map((todo) => (todo.id === id ? { ...todo, editing: true } : todo))
     );
@@ -77,13 +75,15 @@ export default function App() {
     ourFrame.createElement(
       "header",
       { class: "header" },
-      ourFrame.createElement("h1", null, "todos"),
+      // ourFrame.createElement("h1", null, "todos"),
       renderForm(inputValue, setInput, addTodo)
     ),
-    ourFrame.createElement(
-      "main",
-      { class: "main" },
-      renderTodos(filteredTodos, toggleTodo, deleteTodo, startEditing, finishEditing)
+    renderTodos(
+      filteredTodos,
+      toggleTodo,
+      deleteTodo,
+      startEditing,
+      finishEditing
     ),
     renderFilters(itemsLeft, filter, clearCompleted)
   );

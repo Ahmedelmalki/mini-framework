@@ -1,3 +1,4 @@
+import { type } from "os";
 import { ourFrame } from "../../framework/dom.js";
 
 export function renderTodos(
@@ -8,8 +9,26 @@ export function renderTodos(
   finishEditing
 ) {
   return ourFrame.createElement(
-    "section",
-    { class: "todos" },
+    "main",
+    { class: "main", "data-testid": "main" },
+    ourFrame.createElement(
+      "div",
+      { class: "toggle-all-container" },
+      ourFrame.createElement("input", {
+        class: "toggle-all",
+        type: "checkbox",
+        id: "toggle-all",
+        "data-testid": "toggle-all",
+      }),
+      // ourFrame.createElement(
+      //   "label",
+      //   {
+      //     class: "toggle-all-label",
+      //     "for": "toggle-all",
+      //   },
+      //   "Toggle All Input"
+      // )
+    ),
     ourFrame.createElement(
       "ul",
       {
@@ -35,7 +54,6 @@ export function renderTodos(
                 "label",
                 {
                   ondblclick: () => startEditing(todo.id),
-                  
                 },
                 ourFrame.createElement("input", {
                   type: "checkbox",
