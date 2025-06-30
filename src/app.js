@@ -69,12 +69,12 @@ export default function App() {
   });
 
   // render with props passed to renderTodos
-  return ourFrame.createElement(
+   return ourFrame.createElement(
     "div",
-    { class: "todoapp" }, //  updated to match todomvc style
+    { class: "todoapp" },
     ourFrame.createElement("h1", {}, "todos"),
-    renderForm(inputValue, setInput, addTodo, toggleAll, toggleAllChecked), 
-    renderTodos(filteredTodos, toggleTodo, startEditing, saveEditing, editingIndex, todos, setTodos), //  pass edit + state
-    renderFilters(itemsLeft, filter, clearCompleted)
-  );
+    renderForm(inputValue, setInput, addTodo, toggleAll, toggleAllChecked),
+    renderTodos(filteredTodos, toggleTodo, startEditing, saveEditing, editingIndex, todos, setTodos),
+    todos.length > 0 ? renderFilters(itemsLeft, filter, clearCompleted) : null
+  )
 }

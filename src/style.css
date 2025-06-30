@@ -26,16 +26,29 @@ h1 {
 
 /* new todo input */
 .new-todo {
-  padding: 16px 16px 16px 60px;
-  border: none;
-  background: rgba(0, 0, 0, 0.003);
-  width: 100%;
-  font-size: 24px;
-  box-sizing: border-box;
-  font-smoothing: antialiased;
-  line-height: 1.4em;
-  outline: none;
-  font-weight: 300;
+    background: white;
+    height: 65px;
+    padding: 16px 16px 16px 60px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    border: 1px solid #999;
+    box-shadow: inset 0 -1px 5px 0 rgba(0, 0, 0, .2);
+    box-sizing: border-box;
+    color: inherit;
+    font-family: inherit;
+    font-size: 24px;
+    font-weight: inherit;
+    line-height: 1.4em;
+    margin: 0;
+    position: relative;
+    width: 100%;
+}
+
+.new-todo:focus,
+.edit:focus {
+  outline: none; 
+  border-color: #b83f45;
+  box-shadow: 0 0 5px rgba(184, 63, 69, 0.7);
 }
 
 /* main section */
@@ -56,7 +69,7 @@ h1 {
   bottom: 100%;
 }
 
-.toggle-all + label {
+.toggle-all+label {
   width: 60px;
   height: 34px;
   font-size: 0;
@@ -67,7 +80,7 @@ h1 {
   cursor: pointer;
 }
 
-.toggle-all + label:before {
+.toggle-all+label:before {
   content: '❯';
   font-size: 22px;
   color: #e6e6e6;
@@ -187,12 +200,15 @@ h1 {
 
 /* footer */
 .footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 10px 15px;
-  height: 20px;
-  text-align: center;
   font-size: 14px;
   border-top: 1px solid #e6e6e6;
   color: #777;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
 }
 
 .todo-count {
@@ -200,14 +216,6 @@ h1 {
   text-align: left;
 }
 
-.filters {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  position: relative;
-  right: 0;
-  left: 0;
-}
 
 .filters li {
   display: inline;
@@ -226,20 +234,31 @@ h1 {
   border-color: rgba(175, 47, 47, 0.2);
 }
 
-/* .filter li a.selected:hover {
-
-} */
-
 .filters li a:hover {
   border-color: #b83f45;
 }
 
-/* clear button */
+.filters {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
 .clear-completed {
-  float: right;
-  position: relative;
-  line-height: 10px;
-  text-decoration: none;
+  flex: 1;
+  text-align: right;
+  background: none;
+  border: none;
   cursor: pointer;
-  position: relative;
+  color: #777;
+  font-size: 14px;
+  padding: 0;
+}
+
+.clear-completed:hover {
+  text-decoration: underline;
 }

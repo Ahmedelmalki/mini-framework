@@ -1,48 +1,42 @@
-// Router.js
-
 import { ourFrame } from "./dom.js";
 import { effect } from "./effect.js";
 import { state, injectRerender } from "./state.js";
-
 
 export class Router {
   constructor(routes, rootElement) {
     this.routes = routes;
     this.rootElement = rootElement || document.getElementById("root");
-    this.currentPath = window.location.pathname;
-    this.currentApp = null; // Track current VDOM
+    this.currentPath = window.location.hash || "#/";
+    this.currentApp = null;
     this.init();
   }
 
   init() {
-    // Listen to navigation events
     injectRerender(this.rerender.bind(this));
-    window.addEventListener("popstate", () => this.handleNavigation());
+    window.addEventListener("hashchange", () => this.handleNavigation());
     window.addEventListener("navigation", () => this.handleNavigation());
     this.handleNavigation();
   }
 
   handleNavigation() {
-    this.currentPath = window.location.pathname;
-    const route = this.matchRoute(this.currentPath);
+    this.currentPath = window.location.hash || "#/";
+    const cleanPath = this.currentPath.replace(/^#/, ""); // remove '#'
+
+    const route = this.matchRoute(cleanPath);
 
     if (route) {
       this.render(route.component);
     } else {
-      // Redirect to 404 if route doesn't exist
-      this.navigate("/404", true); // `replace: true` to avoid history entry
+      this.navigate("/404", true); // fallback to not found
     }
   }
 
   matchRoute(path) {
-    // Check exact matches first
     if (this.routes[path]) {
       return { component: this.routes[path] };
     }
-
-    return null; // No match
+    return null;
   }
-
 
   render(component) {
     state.startRendering();
@@ -50,7 +44,6 @@ export class Router {
     state.resetCursor();
 
     const newApp = component();
-    // console.log(newApp);
 
     if (this.currentApp) {
       ourFrame.patch(this.rootElement, this.currentApp, newApp);
@@ -68,15 +61,17 @@ export class Router {
   }
 
   navigate(to, replace = false) {
-    if (this.currentPath === to) return;
+    const targetHash = `#${to.replace(/^#/, "")}`; // make sure it starts with #
+
+    if (window.location.hash === targetHash) return;
 
     if (replace) {
-      window.history.replaceState(null, "", to);
+      window.location.replace(targetHash);
     } else {
-      window.history.pushState(null, "", to);
+      window.location.hash = targetHash;
     }
 
-    // Trigger navigation event
+    // trigger navigation manually (optional, sometimes useful)
     window.dispatchEvent(new CustomEvent("navigation"));
   }
 }

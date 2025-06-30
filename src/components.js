@@ -1,5 +1,5 @@
 import { ourFrame } from "../framework/dom.js";
-// import router from "./main.js";
+import router from "./main.js";
 
 export function renderForm(inputValue, setInput, addTodo, toggleAll, toggleAllChecked) {
   return ourFrame.createElement(
@@ -127,6 +127,10 @@ export function renderFilters(itemsLeft, filter, clearCompleted) {
           {
             href: "#/",
             class: filter === "all" ? "selected" : "",
+            onclick: (e) => {
+              e.preventDefault(); // prevent default anchor behavior
+              router.navigate("/"); // use router
+            },
           },
           "All"
         )
@@ -139,6 +143,10 @@ export function renderFilters(itemsLeft, filter, clearCompleted) {
           {
             href: "#/active",
             class: filter === "active" ? "selected" : "",
+            onclick: (e) => {
+              e.preventDefault();
+              router.navigate("/active");
+            },
           },
           "Active"
         )
@@ -151,6 +159,10 @@ export function renderFilters(itemsLeft, filter, clearCompleted) {
           {
             href: "#/completed",
             class: filter === "completed" ? "selected" : "",
+            onclick: (e) => {
+              e.preventDefault();
+              router.navigate("/completed");
+            },
           },
           "Completed"
         )
