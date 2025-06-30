@@ -1,18 +1,17 @@
 import { ourFrame } from "../framework/dom.js";
 import { state } from "../framework/state.js";
 import { renderFilters, renderForm, renderTodos } from "./components.js";
-//import router from './main.js';
 
 export default function App() {
   state.resetCursor();
 
-  // CHANGED HERE: added editingIndex and toggleAllChecked
+  // added editingIndex and toggleAllChecked
   const [todos, setTodos] = state.useState([]);
   const [editingIndex, setEditingIndex] = state.useState(null); // index of task being edited
   const [toggleAllChecked, setToggleAllChecked] = state.useState(false); // toggle all state
   const [inputValue, setInput] = state.useState("");
 
-  // UPDATED: routing logic - changed from pathname to hash
+  // routing logic - changed from pathname to hash
   const currentHash = window.location.hash;
   let filter = "all";
   if (currentHash === "#/active") filter = "active";
@@ -26,13 +25,12 @@ export default function App() {
     setInput("");
   };
 
-  // NEW: toggle all todos
+  // toggle all todos
   const toggleAll = (checked) => {
     setTodos(todos.map(todo => ({ ...todo, completed: checked })));
     setToggleAllChecked(checked);
   };
 
-  // clear completed todos
   const clearCompleted = () => {
     setTodos(todos.filter(todo => !todo.completed));
   };
@@ -44,12 +42,11 @@ export default function App() {
     setTodos(updated);
   };
 
-  // NEW: start editing
   const startEditing = (idx) => {
     setEditingIndex(idx);
   };
 
-  // UPDATED: save edited text with better error handling
+  // save edited text with better error handling
   const saveEditing = (idx, newText) => {
     if (newText === null) {
       setEditingIndex(null);
