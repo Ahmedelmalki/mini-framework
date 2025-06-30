@@ -55,7 +55,9 @@ export function diff(oldTree, newTree) {
         if (i < domChildrenArray.length && !removedIndices.has(i)) {
           diff(oldChildren[i], newChildren[i])(domChildrenArray[i]);
         } else {
-          dom.appendChild(createElement(newChildren[i]));
+          if (newChildren[i]) {
+            dom.appendChild(createElement(newChildren[i]));
+          }
         }
       } else if (i < newChildren.length) {
         // Add new node
@@ -69,7 +71,6 @@ export function diff(oldTree, newTree) {
         }
       }
     }
-
     return dom;
   };
 }
